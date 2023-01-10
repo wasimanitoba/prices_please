@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Errands</h1>
+
+<div id="errands">
+  <% @errands.each do |errand| %>
+    <%= render errand %>
+    <p>
+      <%= link_to "Show this errand", errand %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New errand", new_errand_path %>

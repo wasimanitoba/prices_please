@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: departments
@@ -8,4 +10,9 @@
 #  updated_at :datetime         not null
 #
 class Department < ApplicationRecord
+  before_save do
+    self.name = name.downcase
+  end
+
+  validates :name, presence: true
 end

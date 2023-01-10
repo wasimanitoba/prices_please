@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class PackagesController < ApplicationController
-  before_action :set_package, only: %i[ show edit update destroy ]
+  before_action :set_package, only: %i[show edit update destroy]
 
   # GET /packages or /packages.json
   def index
@@ -7,8 +9,7 @@ class PackagesController < ApplicationController
   end
 
   # GET /packages/1 or /packages/1.json
-  def show
-  end
+  def show; end
 
   # GET /packages/new
   def new
@@ -16,8 +17,7 @@ class PackagesController < ApplicationController
   end
 
   # GET /packages/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /packages or /packages.json
   def create
@@ -25,7 +25,7 @@ class PackagesController < ApplicationController
 
     respond_to do |format|
       if @package.save
-        format.html { redirect_to package_url(@package), notice: "Package was successfully created." }
+        format.html { redirect_to package_url(@package), notice: 'Package was successfully created.' }
         format.json { render :show, status: :created, location: @package }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +38,7 @@ class PackagesController < ApplicationController
   def update
     respond_to do |format|
       if @package.update(package_params)
-        format.html { redirect_to package_url(@package), notice: "Package was successfully updated." }
+        format.html { redirect_to package_url(@package), notice: 'Package was successfully updated.' }
         format.json { render :show, status: :ok, location: @package }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,19 +52,20 @@ class PackagesController < ApplicationController
     @package.destroy
 
     respond_to do |format|
-      format.html { redirect_to packages_url, notice: "Package was successfully destroyed." }
+      format.html { redirect_to packages_url, notice: 'Package was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_package
-      @package = Package.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def package_params
-      params.require(:package).permit(:measurement, :product_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_package
+    @package = Package.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def package_params
+    params.require(:package).permit(:unit_measurement, :product_id, :unit_count, :total_measurement)
+  end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: stores
@@ -10,7 +12,7 @@
 #  updated_at  :datetime         not null
 #
 class Store < ApplicationRecord
-  validates %i[name location], presence: true
+  validates :name, :location, presence: true
 
   validates :name, uniqueness: { scope: :location }
 end

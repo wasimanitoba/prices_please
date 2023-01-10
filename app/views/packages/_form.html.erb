@@ -12,13 +12,23 @@
   <% end %>
 
   <div>
-    <%= form.label :measurement, style: "display: block" %>
-    <%= form.text_field :measurement %>
+    <%= form.label :unit_measurement, style: "display: block" %>
+    <%= form.text_field :unit_measurement %>
   </div>
 
   <div>
     <%= form.label :product_id, style: "display: block" %>
     <%= form.text_field :product_id %>
+  </div>
+
+  <div>
+    <%= form.label :unit_count, style: "display: block" %>
+    <%= form.number_field :unit_count %>
+  </div>
+
+  <div>
+    <%= form.label :total_measurement, style: "display: block" %>
+    <%= form.text_field :total_measurement %>
   </div>
 
   <div>
