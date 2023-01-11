@@ -6,7 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  filterable_attributes :string
-#  measurement_units     :integer
+#  measurement_units     :integer          not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  brand_id              :bigint           not null
@@ -35,4 +35,9 @@ class Product < ApplicationRecord
   belongs_to :item
   belongs_to :brand
   has_many :packages
+  has_many :sales, through: :package, inverse_of: :product
+
+  def measurement_unit
+    measurement_units == 'weight' ? 'kilogram' : 'litre'
+  end
 end

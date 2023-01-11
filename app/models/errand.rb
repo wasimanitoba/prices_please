@@ -8,7 +8,7 @@
 #  estimated_serving_count       :integer
 #  estimated_serving_measurement :decimal(, )
 #  maximum_spend                 :decimal(, )
-#  quantity                      :integer
+#  quantity                      :integer          default(1)
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  brand_id                      :bigint

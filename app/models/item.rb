@@ -5,7 +5,7 @@
 # Table name: items
 #
 #  id            :bigint           not null, primary key
-#  name          :string
+#  name          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  department_id :bigint           not null
@@ -24,16 +24,13 @@ class Item < ApplicationRecord
   validates :name, presence: true
   has_many :products
   has_many :packages, through: :products, inverse_of: :item
+  has_many :sales, through: :packages, inverse_of: :item
+  accepts_nested_attributes_for :sales, :packages, :products
 
   belongs_to :department
 
   before_save do
     self.name = name.downcase
-  end
-
-  def sales
-    # packages.flat_map(&:sales)
-    Sale.where(package: packages)
   end
 
   # Get the best SALE price for any PACKAGE of any PRODUCT for this ITEM for the given STORE

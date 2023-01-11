@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_10_202607) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_11_010349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,10 +22,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_10_202607) do
 
   create_table "budgets", force: :cascade do |t|
     t.string "duration"
-    t.string "total"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: false
+    t.decimal "total"
   end
 
   create_table "budgets_errands", id: false, force: :cascade do |t|
@@ -110,7 +110,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_10_202607) do
     t.bigint "store_id", null: false
     t.bigint "user_id", null: false
     t.date "date", null: false
-    t.integer "quantity", null: false, default: 1
+    t.integer "quantity", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["package_id"], name: "index_sales_on_package_id"
