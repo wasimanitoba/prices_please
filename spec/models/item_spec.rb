@@ -21,7 +21,7 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
-  let(:fake_item) { Item.find_by(name: 'fake item name') }
+  subject(:fake_item) { Item.find_by(name: 'fake item name') }
 
   before do
     user         = User.create!(email: 'test@test.ca', password: 'fake password')
@@ -42,10 +42,12 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe '#sales' do
-    subject { fake_item.sales }
+  it { is_expected.to have_many(:sales).through(:products).through(:packages) }
 
-    it { is_expected.to be_present }
+  describe '#sales' do
+    subject { fake_item.sales.size }
+
+    it { is_expected.to eq(30) }
   end
 
   describe '#best_deal' do

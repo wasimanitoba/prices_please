@@ -37,14 +37,13 @@ RSpec.describe Errand, type: :model do
   let(:dept)   { Department.create!(name: 'fake') }
   let(:budget) { Budget.create!(users: users, duration: 1.week, total: 5_000_000) }
   let(:item)   { Item.create!(name: 'fake', department: dept) }
-  let(:errand) { Errand.create!(item: item, budget: [budget]) }
 
-  describe '' do
-    subject { errand }
+  describe '.create!' do
+    subject(:errand) { Errand.create!(item: item, budget: [budget]) }
 
     it { is_expected.to be_present }
 
-    context 'when filtering by brand' do
+    context 'when creating an errand for a particular brand' do
       let(:brand)  { Brand.create!(name: 'fake') }
       let(:errand) { Errand.create!(item: item, brand: brand, budget: [budget]) }
 
