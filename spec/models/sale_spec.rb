@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Sale, type: :model do
   subject(:sale) { Sale.create!(**sale_params) }
 
-  let(:sale_params)  { { store: fake_store, user: user, package: fake_package, price: 21, date: Date.current}  }
+  let(:sale_params)  { { store: fake_store, user: user, package: fake_package, price: 21, date: Date.current } }
 
   let(:fake_package) { Package.create!(product: fake_product, unit_measurement: 7, unit_count: 3) }
   let(:fake_store)   { Store.create!(name: 'fake store', location: 'fake location') }

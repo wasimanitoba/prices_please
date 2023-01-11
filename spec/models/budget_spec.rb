@@ -20,6 +20,6 @@ RSpec.describe Budget, type: :model do
     let(:users)  { [User.create!(email: 'fake', password: 'fake')] }
     let(:dept)   { Department.create!(name: 'fake') }
 
-    it { is_expected.to eq("$100,000.00 budgeted for 1 week including 0 items") }
+    it { is_expected.to eq('$100,000.00 budgeted for 1 week including 0 items') }
   end
 end
