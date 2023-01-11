@@ -39,15 +39,15 @@ RSpec.describe Errand, type: :model do
   let(:item)   { Item.create!(name: 'fake', department: dept) }
 
   describe '.create!' do
-    subject(:errand) { Errand.create!(item: item, budget: [budget]) }
+    subject(:errand) { Errand.create!(item: item, budgets: [budget]) }
 
-    it { is_expected.to be_present }
+    it { is_expected.to have_many(:budgets).through(:budgets_errands) }
 
     context 'when creating an errand for a particular brand' do
       let(:brand)  { Brand.create!(name: 'fake') }
-      let(:errand) { Errand.create!(item: item, brand: brand, budget: [budget]) }
+      let(:errand) { Errand.create!(item: item, brand: brand, budgets: [budget]) }
 
-      it { is_expected.to be_present }
+      pending 'return the preferred brand if possible. create an alternative errand on the budget if a better price found for another brand.'
     end
   end
 end

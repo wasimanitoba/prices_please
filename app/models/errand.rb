@@ -33,6 +33,6 @@
 class Errand < ApplicationRecord
   belongs_to :brand, optional: true
   has_many :budgets_errands
-  has_many :budget, through: :budgets_errands
+  has_many :budgets, through: :budgets_errands
   belongs_to :item
 end

@@ -12,6 +12,10 @@
 #  updated_at  :datetime         not null
 #
 class Store < ApplicationRecord
+  def inspect
+    "Store ##{id}: #{name.titleize} in #{location.titleize}"
+  end
+
   validates :name, :location, presence: true
 
   validates :name, uniqueness: { scope: :location }
