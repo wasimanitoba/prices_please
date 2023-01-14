@@ -29,7 +29,7 @@ RSpec.describe Item, type: :model do
     fake_product = Product.create!(item: fake_item, brand: Brand.create!(name: 'generic'), measurement_units: 1)
     fake_package = Package.create!(product: fake_product, unit_measurement: 1)
 
-    cheap     = { name: 'cheap store', location: 'underprivileged neighbourhood', price: 1 }
+    cheap     = { name: 'cheap store', location: 'underprivileged neighbourhood', price: 2.5 }
     expensive = { name: 'pricey store', location: 'underprivileged neighbourhood', price: 1000 }
     bulk      = { name: 'bulk store', location: 'swanky neighbourhood', price: 100 }
 
@@ -51,6 +51,20 @@ RSpec.describe Item, type: :model do
   end
 
   describe '#best_deal' do
+    subject { fake_item.best_deal }
+
+    it { is_expected.to have_attributes(price: 2.5) }
+  end
+
+  describe '#best_deal_for_store' do
+    subject { fake_item.best_deal_for_store(bulk_store) }
+
+    let(:bulk_store) { Store.find_by(name: 'bulk store') }
+
+    it { is_expected.to have_attributes(price: 100) }
+  end
+
+  describe '#best_supplier' do
     subject { fake_item.best_supplier }
 
     let(:the_cheap_store) { Store.find_by(name: 'cheap store') }

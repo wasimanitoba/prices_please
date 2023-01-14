@@ -1,0 +1,2 @@
+module ShoppingSelectionsHelper
+end

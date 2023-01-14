@@ -12,6 +12,9 @@
 #  updated_at  :datetime         not null
 #
 class Store < ApplicationRecord
+  has_many :shopping_lists, inverse_of: :alternate_store
+  has_many :shopping_lists, inverse_of: :recommend_store
+
   def inspect
     "Store ##{id}: #{name.titleize} in #{location.titleize}"
   end

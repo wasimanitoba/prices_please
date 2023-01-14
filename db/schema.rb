@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_11_010349) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -118,6 +118,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_11_010349) do
     t.index ["user_id"], name: "index_sales_on_user_id"
   end
 
+  create_table "shopping_lists", force: :cascade do |t|
+    t.decimal "cheapest_total"
+    t.decimal "best_value_total"
+    t.bigint "cheapest_store_id"
+    t.bigint "best_value_store_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["best_value_store_id"], name: "index_shopping_lists_on_best_value_store_id"
+    t.index ["cheapest_store_id"], name: "index_shopping_lists_on_cheapest_store_id"
+  end
+
+  create_table "shopping_selections", force: :cascade do |t|
+    t.bigint "best_matching_deal_id", null: false
+    t.bigint "better_alternate_deal_id"
+    t.bigint "shopping_list_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["best_matching_deal_id"], name: "index_shopping_selections_on_best_matching_deal_id"
+    t.index ["better_alternate_deal_id"], name: "index_shopping_selections_on_better_alternate_deal_id"
+    t.index ["shopping_list_id"], name: "index_shopping_selections_on_shopping_list_id"
+  end
+
   create_table "stores", force: :cascade do |t|
     t.string "name", null: false
     t.string "location", null: false
@@ -144,4 +166,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_11_010349) do
   add_foreign_key "sales", "packages"
   add_foreign_key "sales", "stores"
   add_foreign_key "sales", "users"
+  add_foreign_key "shopping_lists", "stores", column: "best_value_store_id"
+  add_foreign_key "shopping_lists", "stores", column: "cheapest_store_id"
 end

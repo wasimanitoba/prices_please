@@ -27,18 +27,22 @@ class Item < ApplicationRecord
   has_many :sales, through: :packages, inverse_of: :item
   accepts_nested_attributes_for :sales, :packages, :products
 
+  scope :with_sales, -> { sales.order(price: :asc) }
+  scope :with_store_sales, -> (store) { with_sales.where(store: store) }
+
   belongs_to :department
 
   before_save do
     self.name = name.downcase
   end
 
-  # Get the best SALE price for any PACKAGE of any PRODUCT for this ITEM for the given STORE
-  def best_deal_for_store(store); end
-
   # Get the best SALE price for any PACKAGE of any PRODUCT for this ITEM for ANY store
   def best_deal
-    sales.order(price: :asc).limit(1).first
+    Sale.find_cheapest_sale_for_item(self)
+  end
+
+  def best_deal_for_store(store)
+    Sale.where(store: store).find_cheapest_sale_for_item(self)
   end
 
   def best_supplier

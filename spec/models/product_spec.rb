@@ -25,10 +25,6 @@
 require 'rails_helper'
 
 RSpec.describe Product, type: :model do
-  describe '#best_deal_for_store' do; end
-
-  describe '#best_deal' do; end
-
   describe '#cheapest_supplier' do; end
   describe '#monthly_average_price' do; end
   describe '#yearly_average_price' do; end

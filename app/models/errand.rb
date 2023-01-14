@@ -32,6 +32,8 @@
 #
 class Errand < ApplicationRecord
   belongs_to :brand, optional: true
+  belongs_to :store, optional: true
+  belongs_to :product, optional: true
   has_many :budgets_errands
   has_many :budgets, through: :budgets_errands
   belongs_to :item

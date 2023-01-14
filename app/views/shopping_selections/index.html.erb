@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Shopping selections</h1>
+
+<div id="shopping_selections">
+  <% @shopping_selections.each do |shopping_selection| %>
+    <%= render shopping_selection %>
+    <p>
+      <%= link_to "Show this shopping selection", shopping_selection %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New shopping selection", new_shopping_selection_path %>
