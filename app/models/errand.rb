@@ -5,9 +5,9 @@
 # Table name: errands
 #
 #  id                            :bigint           not null, primary key
-#  estimated_serving_count       :integer
-#  estimated_serving_measurement :decimal(, )
-#  maximum_spend                 :decimal(, )
+#  estimated_serving_count       :integer          not null
+#  estimated_serving_measurement :decimal(, )      not null
+#  maximum_spend                 :decimal(, )      not null
 #  quantity                      :integer          default(1)
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -31,6 +31,10 @@
 #  fk_rails_...  (store_id => stores.id)
 #
 class Errand < ApplicationRecord
+  validates :maximum_spend, presence: true
+  validates :estimated_serving_count, presence: true
+  validates :estimated_serving_measurement, presence: true
+
   belongs_to :brand, optional: true
   belongs_to :store, optional: true
   belongs_to :product, optional: true

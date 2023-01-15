@@ -22,7 +22,7 @@
 #  fk_rails_...  (shopping_list_id => shopping_lists.id)
 #
 class ShoppingSelection < ApplicationRecord
-  belongs_to :shopping_list
+  belongs_to :shopping_list, touch: true
   belongs_to :better_alternate_deal, class_name: 'Sale', foreign_key: 'better_alternate_deal', optional: true
   belongs_to :best_matching_deal, class_name: 'Sale', foreign_key: 'best_matching_deal_id'
 end

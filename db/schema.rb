@@ -62,8 +62,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
     t.integer "quantity", default: 1
     t.decimal "maximum_spend"
     t.bigint "brand_id"
-    t.integer "estimated_serving_count"
-    t.decimal "estimated_serving_measurement"
+    t.integer "estimated_serving_count", null: false
+    t.decimal "estimated_serving_measurement", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "store_id"

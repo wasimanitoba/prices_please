@@ -5,9 +5,9 @@
 # Table name: errands
 #
 #  id                            :bigint           not null, primary key
-#  estimated_serving_count       :integer
-#  estimated_serving_measurement :decimal(, )
-#  maximum_spend                 :decimal(, )
+#  estimated_serving_count       :integer          not null
+#  estimated_serving_measurement :decimal(, )      not null
+#  maximum_spend                 :decimal(, )      not null
 #  quantity                      :integer          default(1)
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -37,17 +37,11 @@ RSpec.describe Errand, type: :model do
   let(:dept)   { Department.create!(name: 'fake') }
   let(:budget) { Budget.create!(users: users, duration: 1.week, total: 5_000_000) }
   let(:item)   { Item.create!(name: 'fake', department: dept) }
+  let(:errand_opts) { { estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 } }
 
   describe '.create!' do
-    subject(:errand) { Errand.create!(item: item, budgets: [budget]) }
+    subject(:errand) { Errand.create!(item: item, budgets: [budget], **errand_opts) }
 
     it { is_expected.to have_many(:budgets).through(:budgets_errands) }
-
-    context 'when creating an errand for a particular brand' do
-      let(:brand)  { Brand.create!(name: 'fake') }
-      let(:errand) { Errand.create!(item: item, brand: brand, budgets: [budget]) }
-
-      pending 'return the preferred brand if possible. create an alternative errand on the budget if a better price found for another brand.'
-    end
   end
 end

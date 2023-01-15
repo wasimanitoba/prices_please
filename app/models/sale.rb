@@ -35,9 +35,14 @@ class Sale < ApplicationRecord
   belongs_to :store
   belongs_to :user
   belongs_to :package
-  belongs_to :product, optional: true, inverse_of: :sale
-  belongs_to :item, optional: true, inverse_of: :sale
-  accepts_nested_attributes_for :item, :package
+  belongs_to :product, optional: true, inverse_of: :sales
+  belongs_to :item, optional: true, inverse_of: :sales
+
+  delegate :brand, to: :product
+  delegate :product, to: :package
+  delegate :item, to: :product
+
+  accepts_nested_attributes_for :package
 
   scope :with_packages, -> { joins(:package) }
   scope :with_package, -> (sought_package) { with_packages.where(packages: sought_package ) }

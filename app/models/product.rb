@@ -35,7 +35,8 @@ class Product < ApplicationRecord
   belongs_to :item
   belongs_to :brand
   has_many :packages
-  has_many :sales, through: :package, inverse_of: :product
+  has_many :sales, through: :packages, inverse_of: :product
+  accepts_nested_attributes_for :item
 
   def measurement_unit
     measurement_units == 'weight' ? 'kilogram' : 'litre'

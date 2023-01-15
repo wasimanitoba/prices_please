@@ -32,7 +32,7 @@ class Package < ApplicationRecord
   has_many :sales
   belongs_to :product
   belongs_to :item, optional: true, inverse_of: :packages
-  accepts_nested_attributes_for :item, :product
+  accepts_nested_attributes_for :product
 
   before_save do
     self.total_measurement = unit_measurement * unit_count
