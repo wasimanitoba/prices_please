@@ -40,4 +40,8 @@ RSpec.describe ShoppingListService, focus: true do
 
     it { is_expected.to be_empty }
   end
+
+  context 'when multiple packages are needed for the desired quantity of servings' do
+    pending
+  end
 end

@@ -38,7 +38,7 @@ RSpec.describe Item, type: :model, focus: true do
 
       opts.merge!({ package: fake_package, store: store, quantity: 1, date: Date.current, user: user })
 
-      (1..10).each { |_i| Sale.create!(**opts) }
+      Sale.create!(**opts)
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Item, type: :model, focus: true do
   describe '#sales' do
     subject { fake_item.sales.size }
 
-    it { is_expected.to eq(30) }
+    it { is_expected.to eq(3) }
   end
 
   describe '#best_deal' do

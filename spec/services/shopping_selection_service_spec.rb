@@ -24,31 +24,6 @@ RSpec.describe ShoppingListService, focus: true do
     Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
   end
 
-  context 'when the cost for the preferred brand exceeds the budgeted amount' do
-    # subject { shopping_selection.best_matching_deal.brand }
-
-    # let(:particular_brand)  { Brand.create!(name: 'fake particular brand') }
-    # let(:another_budget)    { Budget.create!(users: [User.last], duration: 2.week, total: 3_123_654)  }
-    # let(:alternate_item)    { Item.find_by(name: 'fake item name') }
-    # let(:alternate_product) { Product.create!(item: alternate_item, brand: particular_brand, measurement_units: 1) }
-    # let(:alternate_package) { Package.create!(product: alternate_product, unit_measurement: 7, unit_count: 3) }
-
-    # before do
-    #   Errand.create!(item: alternate_item, brand: particular_brand, budgets: [another_budget], **errand_opts)
-    #   Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
-    # end
-
-    # context 'where the alternate brand is NOT a better deal' do
-    #   let(:generic_brand) { Brand.find_by(name: 'generic') }
-
-    #   before do
-    #     Sale.create!(store: fake_store, user: user, package: alternate_package, price: 210, date: Date.current)
-    #   end
-
-    #   it { is_expected.to eq(generic_brand) }
-    # end
-  end
-
   context 'when filtering by store' do
     pending
   end
@@ -66,36 +41,49 @@ RSpec.describe ShoppingListService, focus: true do
     it { is_expected.to be_nil }
   end
 
-  context 'when creating an errand for an alternate brand' do
+  context 'when creating an errand for a particular brand' do
     subject { shopping_selection.best_matching_deal.brand }
 
-    let(:particular_brand)  { Brand.create!(name: 'fake particular brand') }
-    let(:another_budget)    { Budget.create!(users: [User.last], duration: 2.week, total: 3_123_654)  }
-    let(:alternate_item)    { Item.find_by(name: 'fake item name') }
-    let(:alternate_product) { Product.create!(item: alternate_item, brand: particular_brand, measurement_units: 1) }
+    let(:errand) { Errand.create!(item: fake_item, brand: alternate_brand, budgets: [budget], **errand_opts) }
+    let(:alternate_brand) { Brand.create!(name: 'fake alternate brand') }
+    let(:alternate_product) { Product.create!(item: fake_item, brand: alternate_brand, measurement_units: 1) }
     let(:alternate_package) { Package.create!(product: alternate_product, unit_measurement: 7, unit_count: 3) }
+    let(:particular_brand)  { Brand.find_by(name: 'generic') }
 
     before do
-      Errand.create!(item: alternate_item, brand: particular_brand, budgets: [another_budget], **errand_opts)
-      Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
+      Sale.create!(store: fake_store, user: user, package: alternate_package, price: 21, date: Date.current)
     end
 
-    context 'where the alternate brand is a better deal' do
-      before do
-        Sale.create!(store: fake_store, user: user, package: alternate_package, price: 2.1, date: Date.current)
+    it { is_expected.to eq(particular_brand) }
+
+    context 'where the cost for the preferred brand exceeds the budgeted amount' do
+      subject { shopping_selection }
+
+      let(:errand_opts) do
+        { store: Store.last, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 15 }
       end
 
-      it { is_expected.to eq(particular_brand) }
-    end
+      it { is_expected.to be_nil }
 
-    context 'where the alternate brand is NOT a better deal' do
-      let(:generic_brand) { Brand.find_by(name: 'generic') }
+      context 'with an alternate brand at a better price' do
+        subject { shopping_selection.best_matching_deal.brand }
 
-      before do
-        Sale.create!(store: fake_store, user: user, package: alternate_package, price: 210, date: Date.current)
+        before do
+          Sale.create!(store: fake_store, user: user, package: alternate_package, price: 2.1, date: Date.current)
+        end
+
+        it { is_expected.to eq(alternate_brand) }
       end
 
-      it { is_expected.to eq(generic_brand) }
+      context 'with an alternate brand at a worse price' do
+        subject { shopping_selection }
+
+        before do
+          Sale.create!(store: fake_store, user: user, package: alternate_package, price: 210, date: Date.current)
+        end
+
+        it { is_expected.to be_nil }
+      end
     end
   end
 end
