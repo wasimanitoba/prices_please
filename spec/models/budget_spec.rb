@@ -13,7 +13,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Budget, type: :model do
+RSpec.describe Budget, type: :model, focus: true do
   describe '#to_s' do
     subject { Budget.create!(users: users, duration: 1.week, total: 100_000).to_s }
 

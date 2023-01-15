@@ -20,7 +20,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Item, type: :model do
+RSpec.describe Item, type: :model, focus: true do
   subject(:fake_item) { Item.find_by(name: 'fake item name') }
 
   before do

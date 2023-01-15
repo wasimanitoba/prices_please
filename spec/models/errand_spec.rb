@@ -32,7 +32,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Errand, type: :model do
+RSpec.describe Errand, type: :model, focus: true do
   let(:users)  { [User.create!(email: 'fake', password: 'fake')] }
   let(:dept)   { Department.create!(name: 'fake') }
   let(:budget) { Budget.create!(users: users, duration: 1.week, total: 5_000_000) }

@@ -28,7 +28,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Sale, type: :model do
+RSpec.describe Sale, type: :model, focus: true do
   subject(:sale) { Sale.create!(**sale_params) }
 
   let(:sale_params)  { { store: fake_store, user: user, package: fake_package, price: 21, date: Date.current } }

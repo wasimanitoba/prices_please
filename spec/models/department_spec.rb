@@ -11,7 +11,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Department, type: :model do
+RSpec.describe Department, type: :model, focus: true do
   context 'when creating a department without a name' do
     subject(:department) { Department.new(name: '') }
 

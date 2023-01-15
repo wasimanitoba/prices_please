@@ -13,4 +13,8 @@ class Brand < ApplicationRecord
   before_save do
     self.name = name.downcase
   end
+
+  def inspect
+    "#{name.titleize} - [Brand object ID: #{id}|#{object_id}]"
+  end
 end
