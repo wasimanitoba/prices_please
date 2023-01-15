@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe ShoppingListService, focus: true do
-  subject(:list) { ShoppingListService.call(budget, User.last) }
+RSpec.describe ListGeneratorService, focus: true do
+  subject(:list) { ListGeneratorService.call(budget, User.last) }
 
   let(:sale) { Sale.where(user: user).first }
   let(:user) { User.find_by(email: 'fake') }
@@ -34,7 +34,7 @@ RSpec.describe ShoppingListService, focus: true do
   end
 
   context 'with an empty budget' do
-    subject(:list) { ShoppingListService.call(empty_budget, User.last) }
+    subject(:list) { ListGeneratorService.call(empty_budget, User.last) }
 
     let(:empty_budget) { Budget.create!(users: [User.last], duration: 2.week, total: 3_123_654)  }
 

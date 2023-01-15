@@ -50,6 +50,9 @@ class Sale < ApplicationRecord
   scope :with_products, -> { joins(package: :product) }
   scope :with_product, -> (sought_product) { with_products.where(packages: { products: sought_product }) }
 
+  scope :with_brands, -> { joins(package: { product: :brand } ) }
+  scope :with_brand, -> (sought_brand) { with_brands.where(packages: { products: { brands: sought_brand } } ) }
+
   scope :with_items, -> { joins(package: { product: :item }) }
   scope :with_item, -> (sought_item) { with_items.where(packages: { products: { items: sought_item } }) }
 
@@ -59,6 +62,10 @@ class Sale < ApplicationRecord
 
   def unit_cost
     total_measurement.to_f / price
+  end
+
+  def self.best_deal_for_brand(sought_brand)
+    with_brand(sought_brand).order(:price).limit(1).first
   end
 
   def self.find_cheapest_sale_for_package(sought_package)

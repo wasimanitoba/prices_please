@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-RSpec.describe ShoppingListService, focus: true do
-  subject(:shopping_selection) { ShoppingSelectionService.call(errand) }
+RSpec.describe GrocerySelectionService, focus: true do
+  subject(:shopping_selection) { GrocerySelectionService.call(errand) }
 
   let(:sale) { Sale.where(user: user).first }
   let(:user) { User.find_by(email: 'fake') }
   let(:budget) { Budget.create!(users: [user], duration: 1.week, total: 5_000_000)  }
   let(:fake_package) { Package.create!(product: fake_product, unit_measurement: 7, unit_count: 3) }
-  let(:fake_product) { Product.create!(item: fake_item, brand: brand, measurement_units: 1) }
+  let(:fake_product) { Product.create!(item: fake_item, brand: particular_brand, measurement_units: 1) }
   let(:fake_store) { Store.create!(name: 'fake store', location: 'fake location') }
   let(:fake_item) { Item.create!(name: 'fake item name', department: dept) }
   let(:dept) { Department.create!(name: 'fake') }
-  let(:brand) { Brand.create!(name: 'generic') }
+  let(:particular_brand) { Brand.create!(name: 'generic') }
   let(:errand) { Errand.create!(item: fake_item, budgets: [budget], **errand_opts) }
 
   let(:errand_opts) do
-    { store: Store.last, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 }
+    { estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 }
   end
 
   before do
@@ -24,8 +24,19 @@ RSpec.describe ShoppingListService, focus: true do
     Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
   end
 
+  it { is_expected.to be_an_instance_of(ShoppingSelection) }
+
   context 'when filtering by store' do
-    pending
+    subject { shopping_selection.best_matching_deal.store }
+
+    let(:preferred_store) { Store.create!(name: 'preferred store', location: 'somewhere') }
+    let(:errand_opts) do
+      { store: preferred_store, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 }
+    end
+
+    before { Sale.create!(store: preferred_store, user: user, package: fake_package, price: 21, date: Date.current)  }
+
+    it { is_expected.to eq(preferred_store) }
   end
 
   context 'when filtering by product' do
@@ -33,7 +44,7 @@ RSpec.describe ShoppingListService, focus: true do
   end
 
   context 'when there are no sales for the selected item' do
-    subject { ShoppingSelectionService.call(errand) }
+    subject { GrocerySelectionService.call(errand) }
 
     let(:errand) { Errand.create!(item: another_fake_item, budgets: [budget], **errand_opts) }
     let(:another_fake_item) { Item.create!(name: 'a different fake item name', department: dept) }
@@ -44,15 +55,12 @@ RSpec.describe ShoppingListService, focus: true do
   context 'when creating an errand for a particular brand' do
     subject { shopping_selection.best_matching_deal.brand }
 
-    let(:errand) { Errand.create!(item: fake_item, brand: alternate_brand, budgets: [budget], **errand_opts) }
-    let(:alternate_brand) { Brand.create!(name: 'fake alternate brand') }
+    let(:particular_brand)  { Brand.create!(name: 'particular brand') }
+    let(:alternate_brand)   { Brand.create!(name: 'fake alternate brand') }
     let(:alternate_product) { Product.create!(item: fake_item, brand: alternate_brand, measurement_units: 1) }
     let(:alternate_package) { Package.create!(product: alternate_product, unit_measurement: 7, unit_count: 3) }
-    let(:particular_brand)  { Brand.find_by(name: 'generic') }
 
-    before do
-      Sale.create!(store: fake_store, user: user, package: alternate_package, price: 21, date: Date.current)
-    end
+    let(:errand)            { Errand.create!(item: fake_item, brand: particular_brand, budgets: [budget], **errand_opts) }
 
     it { is_expected.to eq(particular_brand) }
 
@@ -61,6 +69,10 @@ RSpec.describe ShoppingListService, focus: true do
 
       let(:errand_opts) do
         { store: Store.last, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 15 }
+      end
+
+      before do
+        Sale.create!(store: fake_store, user: user, package: alternate_package, price: 21, date: Date.current)
       end
 
       it { is_expected.to be_nil }

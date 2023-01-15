@@ -1,7 +1,7 @@
 
 # frozen_string_literal: true
 
-class ShoppingSelectionService < ApplicationService
+class GrocerySelectionService < ApplicationService
   def initialize(errand)
     @errand = errand
 
@@ -11,8 +11,8 @@ class ShoppingSelectionService < ApplicationService
                         errand.item.best_deal_for_store(errand.store)
                       # elsif errand.product.present?
                         # errand.item.best_deal_for_product(errand.product)
-                      # elsif errand.brand.present?
-                        # errand.item.best_deal_for_brand(errand.brand)
+                      elsif errand.brand.present?
+                        errand.item.best_deal_for_brand(errand.brand)
                       end
 
     # If a matching sale isn't present, we'll perform on operations on the best available deal for this item.

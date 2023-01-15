@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class ShoppingListService < ApplicationService
+class ListGeneratorService < ApplicationService
   def initialize(budget, user)
     @budget = budget
     @user   = user
@@ -10,7 +10,7 @@ class ShoppingListService < ApplicationService
 
   def call
     @budget.errands.each do |errand|
-      shopping_selector = ShoppingSelectionService.new(errand)
+      shopping_selector = GrocerySelectionService.new(errand)
 
       @store_totals[errand.store.id][:total_price] += shopping_selector.calculated_price
       @store_totals[errand.store.id][:value_per_dollar] += shopping_selector.calculated_measurement

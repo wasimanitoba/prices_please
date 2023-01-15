@@ -45,6 +45,10 @@ class Item < ApplicationRecord
     Sale.where(store: store).find_cheapest_sale_for_item(self)
   end
 
+  def best_deal_for_brand(brand)
+    Sale.with_item(self).best_deal_for_brand(brand)
+  end
+
   def best_supplier
     best_deal.store
   end
