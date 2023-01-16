@@ -3,6 +3,7 @@
 # Table name: shopping_selections
 #
 #  id                       :bigint           not null, primary key
+#  quantity                 :integer
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  best_matching_deal_id    :bigint           not null

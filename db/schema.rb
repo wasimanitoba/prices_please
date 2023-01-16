@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_16_125348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,7 +59,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
   end
 
   create_table "errands", force: :cascade do |t|
-    t.integer "quantity", default: 1
     t.decimal "maximum_spend"
     t.bigint "brand_id"
     t.integer "estimated_serving_count", null: false
@@ -69,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
     t.bigint "store_id"
     t.bigint "product_id"
     t.bigint "item_id", null: false
+    t.integer "quantity"
     t.index ["brand_id"], name: "index_errands_on_brand_id"
     t.index ["item_id"], name: "index_errands_on_item_id"
     t.index ["product_id"], name: "index_errands_on_product_id"
@@ -135,6 +135,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_14_152809) do
     t.bigint "shopping_list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "quantity"
     t.index ["best_matching_deal_id"], name: "index_shopping_selections_on_best_matching_deal_id"
     t.index ["better_alternate_deal_id"], name: "index_shopping_selections_on_better_alternate_deal_id"
     t.index ["shopping_list_id"], name: "index_shopping_selections_on_shopping_list_id"

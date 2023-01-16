@@ -27,7 +27,7 @@ RSpec.describe GrocerySelectionService, focus: true do
   it { is_expected.to be_an_instance_of(ShoppingSelection) }
 
   context 'when filtering by store' do
-    subject { shopping_selection.best_matching_deal.store }
+    subject { shopping_selection.best_matching_deal }
 
     let(:preferred_store) { Store.create!(name: 'preferred store', location: 'somewhere') }
     let(:errand_opts) do
@@ -36,11 +36,7 @@ RSpec.describe GrocerySelectionService, focus: true do
 
     before { Sale.create!(store: preferred_store, user: user, package: fake_package, price: 21, date: Date.current)  }
 
-    it { is_expected.to eq(preferred_store) }
-  end
-
-  context 'when filtering by product' do
-    pending
+    it { is_expected.to have_attributes(store: preferred_store) }
   end
 
   context 'when there are no sales for the selected item' do
@@ -53,7 +49,7 @@ RSpec.describe GrocerySelectionService, focus: true do
   end
 
   context 'when creating an errand for a particular brand' do
-    subject { shopping_selection.best_matching_deal.brand }
+    subject { shopping_selection&.best_matching_deal }
 
     let(:particular_brand)  { Brand.create!(name: 'particular brand') }
     let(:alternate_brand)   { Brand.create!(name: 'fake alternate brand') }
@@ -62,11 +58,9 @@ RSpec.describe GrocerySelectionService, focus: true do
 
     let(:errand)            { Errand.create!(item: fake_item, brand: particular_brand, budgets: [budget], **errand_opts) }
 
-    it { is_expected.to eq(particular_brand) }
+    it { is_expected.to have_attributes(brand: particular_brand) }
 
     context 'where the cost for the preferred brand exceeds the budgeted amount' do
-      subject { shopping_selection }
-
       let(:errand_opts) do
         { store: Store.last, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 15 }
       end
@@ -78,24 +72,38 @@ RSpec.describe GrocerySelectionService, focus: true do
       it { is_expected.to be_nil }
 
       context 'with an alternate brand at a better price' do
-        subject { shopping_selection.best_matching_deal.brand }
+        subject { shopping_selection.best_matching_deal }
 
         before do
           Sale.create!(store: fake_store, user: user, package: alternate_package, price: 2.1, date: Date.current)
         end
 
-        it { is_expected.to eq(alternate_brand) }
+        it { is_expected.to have_attributes(brand: alternate_brand) }
       end
 
       context 'with an alternate brand at a worse price' do
-        subject { shopping_selection }
-
         before do
           Sale.create!(store: fake_store, user: user, package: alternate_package, price: 210, date: Date.current)
         end
 
         it { is_expected.to be_nil }
       end
+    end
+  end
+
+  context 'when multiple packages are needed for the desired quantity of servings' do
+    let(:errand_opts) do
+      { estimated_serving_count: 1, estimated_serving_measurement: 210, maximum_spend: 1000 }
+    end
+
+    it { is_expected.to have_attributes(quantity: 10) }
+
+    context 'with an insufficient budget' do
+      let(:errand_opts) do
+        { estimated_serving_count: 1, estimated_serving_measurement: 210, maximum_spend: 100 }
+      end
+
+      it { is_expected.to be_nil }
     end
   end
 end

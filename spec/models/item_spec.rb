@@ -45,9 +45,9 @@ RSpec.describe Item, type: :model, focus: true do
   it { is_expected.to have_many(:sales).through(:products).through(:packages) }
 
   describe '#sales' do
-    subject { fake_item.sales.size }
+    subject { fake_item.sales }
 
-    it { is_expected.to eq(3) }
+    it { is_expected.to have_attributes(size: 3) }
   end
 
   describe '#best_deal' do

@@ -7,8 +7,8 @@
 #  id                            :bigint           not null, primary key
 #  estimated_serving_count       :integer          not null
 #  estimated_serving_measurement :decimal(, )      not null
-#  maximum_spend                 :decimal(, )      not null
-#  quantity                      :integer          default(1)
+#  maximum_spend                 :decimal(, )
+#  quantity                      :integer
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  brand_id                      :bigint

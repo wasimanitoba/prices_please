@@ -19,19 +19,22 @@ class GrocerySelectionService < ApplicationService
     @fallback_selection = @matching_sale || errand.item.best_deal
 
     return if @fallback_selection.blank?
+
     estimated_total_measurement = @errand.estimated_serving_count * @errand.estimated_serving_measurement
 
-    if @fallback_selection.package.total_measurement >= estimated_total_measurement
-      @errand.quantity ||= 1
-    else
-      @errand.quantity ||= (estimated_total_measurement / @fallback_selection.package.total_measurement).to_i
-    end
+    @shopping_selection.quantity = if @errand.quantity.present?
+                                    @errand.quantity
+                                   elsif @fallback_selection.package.total_measurement >= estimated_total_measurement
+                                    1
+                                   else
+                                    (estimated_total_measurement / @fallback_selection.package.total_measurement).to_i
+                                   end
   end
 
   def call
     return if @fallback_selection.blank?
 
-    savings = @errand.maximum_spend - @fallback_selection.price
+    savings = @errand.maximum_spend - (@fallback_selection.price * @shopping_selection.quantity)
     return if savings < 0
 
     @shopping_selection.best_matching_deal = @matching_sale
@@ -42,10 +45,10 @@ class GrocerySelectionService < ApplicationService
   end
 
   def calculated_measurement
-    @calculated_measurement ||= @fallback_selection.unit_cost * @errand.quantity
+    @calculated_measurement ||= @fallback_selection.unit_cost * @shopping_selection.quantity
   end
 
   def calculated_price
-    @calculated_price ||= @fallback_selection.price * @errand.quantity
+    @calculated_price ||= @fallback_selection.price * @shopping_selection.quantity
   end
 end
