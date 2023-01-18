@@ -1,0 +1,36 @@
+<%= notice %>
+
+<%- if @scrape %>
+  <div>
+    <%= form_tag("/admin/pipeline/scrape", method: "post" ) do %>
+      <%= label_tag(:website, "Website to scrape" ) %>
+      <%= text_field_tag(:website) %>
+      <%= submit_tag("Scrape") %>
+    <% end %>
+  </div>
+<%- end %>
+
+<%- if @raw_ingested_data %>
+  <div>
+    <p>Successfully ingested scraped data:</p>
+    <%= form_tag("/admin/pipeline/transform", method: "post" ) do %>
+    <%= submit_tag("Transform") %>
+  <% end %>
+  </div>
+<%- end %>
+
+<%- if @transformed_data %>
+  <div>
+    <p>Ingested data Successfully transformed:</p>
+    <%= form_tag("/admin/pipeline/load", method: "post" ) do %>
+      <%= submit_tag("Load") %>
+  <% end %>
+  </div>
+<%- end %>
+
+<%- if @loaded %>
+  <div>
+    <p>Data Successfully loaded to Database:</p>
+    <% link_to('Review Updated Sales Prices', sales_path) %>
+  </div>
+<%- end %>

@@ -67,10 +67,11 @@ group :development do
   gem 'annotate'
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
-  gem 'rack-mini-profiler'
+  # gem 'rack-mini-profiler'
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
 
-gem 'unpoly-rails'
+gem 'aws-sdk-s3'
+gem 'selenium-webdriver'

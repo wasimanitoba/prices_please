@@ -16,8 +16,18 @@ Rails.application.routes.draw do
   resources :products
   resources :items
   resources :departments
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
+  scope 'admin' do
+    scope 'pipeline' do
+      post '/scrape', to: 'admin#scrape'
+      post '/transform', to: 'admin#transform'
+      post '/load', to: 'admin#load'
+
+      get '/', to: 'admin#pipeline', as: :pipeline
+    end
+
+    get '/', to: 'admin#index'
+  end
+
   root 'home#index'
 end
