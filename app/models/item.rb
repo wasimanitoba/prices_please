@@ -36,6 +36,10 @@ class Item < ApplicationRecord
     self.name = name.downcase
   end
 
+  def to_s
+    name.titleize
+  end
+
   # Get the best SALE price for any PACKAGE of any PRODUCT for this ITEM for ANY store
   def best_deal
     Sale.find_cheapest_sale_for_item(self)

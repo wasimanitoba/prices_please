@@ -56,6 +56,10 @@ class Sale < ApplicationRecord
   scope :with_items, -> { joins(package: { product: :item }) }
   scope :with_item, -> (sought_item) { with_items.where(packages: { products: { items: sought_item } }) }
 
+  def package_valid?
+    package.unit_measurement > 0
+  end
+
   def total_measurement
     quantity * package.unit_count * package.unit_measurement
   end

@@ -1,32 +1,6 @@
 <div id="<%= dom_id sale %>">
   <p>
-    <strong>Price:</strong>
-    <%= sale.price %>
+    <strong><%= number_to_currency(sale.price) %></strong> | <%= sale.store %> | <%= sale.date %>
   </p>
-
-  <p>
-    <strong>Package:</strong>
-    <%= sale.package_id %>
-  </p>
-
-  <p>
-    <strong>Store:</strong>
-    <%= sale.store_id %>
-  </p>
-
-  <p>
-    <strong>User:</strong>
-    <%= sale.user_id %>
-  </p>
-
-  <p>
-    <strong>Date:</strong>
-    <%= sale.date %>
-  </p>
-
-  <p>
-    <strong>Quantity:</strong>
-    <%= sale.quantity %>
-  </p>
-
+  <p><%= sale.package %></p>
 </div>

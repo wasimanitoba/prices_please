@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_16_125348) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,13 +84,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_125348) do
   end
 
   create_table "packages", force: :cascade do |t|
-    t.decimal "unit_measurement", null: false
+    t.decimal "unit_measurement"
     t.bigint "product_id", null: false
     t.integer "unit_count", default: 1, null: false
-    t.decimal "total_measurement", null: false
+    t.decimal "total_measurement"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_packages_on_product_id"
+  end
+
+  create_table "pipelines", force: :cascade do |t|
+    t.string "target", null: false
+    t.bigint "department_id", null: false
+    t.bigint "store_id", null: false
+    t.string "website", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_pipelines_on_department_id"
+    t.index ["store_id"], name: "index_pipelines_on_store_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -110,6 +121,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_125348) do
     t.bigint "store_id", null: false
     t.bigint "user_id", null: false
     t.date "date", null: false
+    t.string 'details', array: true
     t.integer "quantity", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -162,6 +174,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_125348) do
   add_foreign_key "errands", "stores"
   add_foreign_key "items", "departments"
   add_foreign_key "packages", "products"
+  add_foreign_key "pipelines", "departments"
+  add_foreign_key "pipelines", "stores"
   add_foreign_key "products", "brands"
   add_foreign_key "products", "items"
   add_foreign_key "sales", "packages"

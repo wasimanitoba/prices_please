@@ -14,5 +14,7 @@ class Department < ApplicationRecord
     self.name = name.downcase
   end
 
+  delegate :to_s, to: :name
+
   validates :name, presence: true
 end

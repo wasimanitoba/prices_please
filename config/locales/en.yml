@@ -30,4 +30,29 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  headings:
+    shopping_list: Shopping List
+  links:
+    items: Items
+  labels:
+    filter: Filter
+    create_list: Create Shopping List
+  alerts:
+    no_results_found: Would you like to add one now?
+  store_prices_chart:
+    title: Prices by Store (in Dollars Per Kilogram)
+    series: price
+  weight:
+    mili:
+      one: "gram"
+      other: "grams"
+    unit:
+      one: "kilogram"
+      other: "kilograms"
+  volume:
+    mili:
+      one: "millilitre"
+      other: "millilitres"
+    unit:
+      one: "litre"
+      other: "litres"

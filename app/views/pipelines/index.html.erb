@@ -1,0 +1,17 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Pipelines</h1>
+
+<div id="pipelines">
+  <% @pipelines.each do |pipeline| %>
+    <%= render pipeline %>
+    <p>
+      <%= link_to "Show this pipeline", pipeline %>
+    </p>
+    <p>
+      <%= link_to "Run this pipeline", run_pipeline %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New pipeline", new_pipeline_path %>

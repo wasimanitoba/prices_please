@@ -5,7 +5,7 @@ class SalesController < ApplicationController
 
   # GET /sales or /sales.json
   def index
-    @sales = Sale.all
+    @valid_sales, @invalid_sales = Sale.all.partition(&:package_valid?)
   end
 
   # GET /sales/1 or /sales/1.json

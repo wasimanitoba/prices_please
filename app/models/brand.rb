@@ -14,6 +14,8 @@ class Brand < ApplicationRecord
     self.name = name.downcase
   end
 
+  delegate :to_s, to: :name
+
   def inspect
     "#{name.titleize} - [Brand object ID: #{id}|#{object_id}]"
   end

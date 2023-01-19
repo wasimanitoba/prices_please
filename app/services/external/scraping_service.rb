@@ -1,4 +1,7 @@
 class External::ScrapingService
+  REJECTIONS = ["ADD", "New", "LIMIT", "MULTI", "SALE", "LOW STOCK"]
+  OTHER_REJECTIONS = %w[Ends SAVE]
+
   Selenium::WebDriver::Chrome::Service.driver_path = "/usr/bin/chromedriver"
 
   options = Selenium::WebDriver::Chrome::Options.new
@@ -8,22 +11,45 @@ class External::ScrapingService
   @@wait = Selenium::WebDriver::Wait.new(:timeout => 20)
   @@driver = Selenium::WebDriver.for :chrome, options: options
 
-  def self.document_initialised
-    @@driver.find_element(css: 'ul.product-tile-group__list')
+  def document_initialised
+    @@driver.find_element(css: @target)
   end
 
-  def self.crawl!
+  def initialize(pipeline, user)
+    @department = pipeline.department
+    @website = pipeline.website
+    @store = pipeline.store
+    @target = pipeline.target
+    @user = user
+  end
+
+  def crawl!
 
     begin
-      @@driver.get("https://www.realcanadiansuperstore.ca/food/fruits-vegetables/c/28000")
+      @@driver.get(@website)
 
       @@wait.until { document_initialised }
 
-      @@driver.save_screenshot('public/images/summary.png')
-      @@driver.find_element(class: 'product-grid').save_screenshot('public/images/grid.png')
+      Sale.transaction do
+        @ary = @@driver.find_elements(css: @target).map do |element|
+
+          details = element.text.split(/\n/)
+
+          # name = details.first.tr(' ', '_').downcase.gsub(/[,|(|)|']/, '')
+          # element.save_screenshot("public/images/#{name}.png")
+
+          selected_items = details.reject do |word|
+            REJECTIONS.include?(word) || OTHER_REJECTIONS.any? { |rejection| word.match?(rejection) }
+          end
+
+          GroceryCreationService.call(selected_items, store: @store, department: @department, user: @user)
+        end
+      end
+
     ensure
       @@driver.quit
     end
 
+    @ary
   end
 end

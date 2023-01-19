@@ -4,6 +4,12 @@
 #
 
 Rails.application.routes.draw do
+  resources :pipelines do
+    member do
+      post 'run', to: 'pipelines#run', as: :run
+    end
+  end
+
   resources :shopping_lists
   resources :shopping_selections
   resources :errands
@@ -16,18 +22,6 @@ Rails.application.routes.draw do
   resources :products
   resources :items
   resources :departments
-
-  scope 'admin' do
-    scope 'pipeline' do
-      post '/scrape', to: 'admin#scrape'
-      post '/transform', to: 'admin#transform'
-      post '/load', to: 'admin#load'
-
-      get '/', to: 'admin#pipeline', as: :pipeline
-    end
-
-    get '/', to: 'admin#index'
-  end
 
   root 'home#index'
 end

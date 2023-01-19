@@ -2,12 +2,26 @@
 
 <h1>Sales</h1>
 
-<div id="sales">
-  <% @sales.each do |sale| %>
-    <%= render sale %>
-    <p>
-      <%= link_to "Show this sale", sale %>
-    </p>
+<div id="invalid-sales" class="grid">
+  <% @invalid_sales.each do |sale| %>
+    <div style="color:red">
+      <%= link_to(sale) do %>
+        <%= render(sale) %>
+        <%= sale.details %>
+      <%- end %>
+      <p>
+      </p>
+    </div>
+  <% end %>
+</div>
+
+<div id="valid-sales" class="grid">
+  <% @valid_sales.each do |sale| %>
+    <div style="color:green">
+      <%= link_to(sale) do %>
+        <%= render sale %>
+      <%- end %>
+    </div>
   <% end %>
 </div>
 

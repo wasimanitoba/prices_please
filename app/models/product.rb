@@ -25,6 +25,8 @@
 class Product < ApplicationRecord
   include Shoppable
 
+  enum measurement_units: %i[ weight volume ]
+
   validates :measurement_units, presence: true
 
   serialize :filterable_attributes, Hash

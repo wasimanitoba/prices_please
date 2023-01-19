@@ -34,12 +34,19 @@ class Package < ApplicationRecord
   belongs_to :item, optional: true, inverse_of: :packages
   accepts_nested_attributes_for :product
 
+  delegate :item, to: :product
+  delegate :brand, to: :product
+
   before_save do
     self.total_measurement = unit_measurement * unit_count
   end
 
+  def to_s
+    "#{amount} of #{brand} #{item}"
+  end
+
   def amount(qty = 1)
-    number_to_human(measurement * qty, units: product.measurement_units)
+    number_to_human(unit_measurement * qty, units: product.measurement_units)
   end
 
   # Get the best SALE price for this PACKAGE for the given STORE
