@@ -20,9 +20,11 @@ class PipelinesController < ApplicationController
   end
 
   def run
-    notice = External::ScrapingService.new(@pipeline, User.first).crawl! ? 'Success!' : 'Failure.'
+    new_sales = Extract::WebScrapingPipeline.crawl!(@pipeline)
 
-    redirect_to(sales_path, notice: notice)
+    notice = new_sales ? 'Success!' : 'Failure.'
+
+    redirect_to(sales_path, notice: notice, new_sales: new_sales)
   end
 
   # POST /pipelines or /pipelines.json

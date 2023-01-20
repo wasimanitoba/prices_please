@@ -1,0 +1,63 @@
+<b><%= I18n.t('headings.shopping_list') %> </b>
+<div class="shopping-list"
+     data-controller="shopping"
+     data-shopping-selectable-outlet="#selectable">
+  <div>
+    <label><%= I18n.t('labels.create_list') %></label>
+    <%= turbo_frame_tag("selected-items") do %>
+    <%- end %>
+  </div>
+  <div id="selectable"
+       data-controller="selectable"
+       data-selectable-shopping-outlet=".shopping-list">
+    <div data-controller="filter" class="flex row-reverse justify-apart">
+      <filter-input aria-owns="grocery-items-filter-list">
+        <label><%= I18n.t('labels.filter') %> </label>
+        <input type="text" autofocus autocomplete="off" placeholder="Type item name...">
+      </filter-input>
+      <div class="flex-column">
+        <label>Unselect all items</label>
+        <button data-action="shopping#clear">Clear</button>
+      </div>
+      <div class="flex-column">
+        <label>Select all items</label>
+        <button data-action="shopping#all">Add All</button>
+      </div>
+    </div>
+    <div id="grocery-items-filter-list">
+      <div id="items" data-filter-list class="cards">
+        <% Item.all.each do |item| %>
+          <div id="<%= item.id %>" class="item">
+            <form class="card"
+                  method="post"
+                  data-turbo-frame="selected-items"
+                  data-shopping-target="form"
+                  data-selectable-target="item">
+              <header class="content"><span data-filter-item-text><%= item %></span></header>
+              <%#= image_tag(item.picture, class: 'card-image', alt: "Thumbnail for #{item}", 'data-action': "click->shopping#generateShoppingList:prevent" ) %>
+              <div class="card-action flex justify-apart">
+                 <details>
+                    <summary>
+                      <label>Package Sizes</label>
+
+                      <input type="checkbox"
+                        name="checkbox_<%= item.id %>"
+                        data-selectable-target="input"
+                        data-action="change->selectable#update"
+                        id="checkbox_<%= item.id %>">
+                    </summary>
+                    <%= number_field_tag(:quantity, 1, min: 1, 'data-action': 'change->selectable#update') %>
+                    <%= select_tag(:package, options_from_collection_for_select(item.packages, :id, :amount), include_blank: "All Sizes", 'data-action': 'change->selectable#update') %>
+                 </details>
+              </div>
+            </form>
+          </div>
+        <% end %>
+      </div>
+      <p data-filter-empty-state hidden>
+        0 matching groceries found.
+        <%= link_to(I18n.t('alerts.no_results_found'), new_item_path) %>
+      </p>
+    </div>
+  </form>
+</div>

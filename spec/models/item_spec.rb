@@ -24,7 +24,6 @@ RSpec.describe Item, type: :model, focus: true do
   subject(:fake_item) { Item.find_by(name: 'fake item name') }
 
   before do
-    user         = User.create!(email: 'test@test.ca', password: 'fake password')
     fake_item    = Item.create!(name: 'fake item name', department: Department.create!(name: 'fake dept'))
     fake_product = Product.create!(item: fake_item, brand: Brand.create!(name: 'generic'), measurement_units: 1)
     fake_package = Package.create!(product: fake_product, unit_measurement: 1)
@@ -36,7 +35,7 @@ RSpec.describe Item, type: :model, focus: true do
     [cheap, expensive, bulk].each do |opts|
       store = Store.create!(name: opts.delete(:name), location: opts.delete(:location))
 
-      opts.merge!({ package: fake_package, store: store, quantity: 1, date: Date.current, user: user })
+      opts.merge!({ package: fake_package, store: store, quantity: 1, date: (Date.today - rand(100)) })
 
       Sale.create!(**opts)
     end

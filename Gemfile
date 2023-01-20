@@ -75,3 +75,5 @@ end
 
 gem 'aws-sdk-s3'
 gem 'selenium-webdriver'
+gem 'turbo-rails'
+gem 'stimulus-rails'

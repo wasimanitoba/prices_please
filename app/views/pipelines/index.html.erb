@@ -6,10 +6,7 @@
   <% @pipelines.each do |pipeline| %>
     <%= render pipeline %>
     <p>
-      <%= link_to "Show this pipeline", pipeline %>
-    </p>
-    <p>
-      <%= link_to "Run this pipeline", run_pipeline %>
+      <%= button_to "Run this pipeline", run_pipeline_path(pipeline) %>
     </p>
   <% end %>
 </div>

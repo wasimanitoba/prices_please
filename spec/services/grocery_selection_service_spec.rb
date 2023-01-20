@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe GrocerySelectionService, focus: true do
-  subject(:shopping_selection) { GrocerySelectionService.call(errand) }
+RSpec.describe Shopping::GrocerySelector, focus: true do
+  subject(:shopping_selection) { Shopping::GrocerySelector.call(errand) }
 
   let(:sale) { Sale.where(user: user).first }
   let(:user) { User.find_by(email: 'fake') }
@@ -21,7 +21,7 @@ RSpec.describe GrocerySelectionService, focus: true do
   before do
     user = User.create!(email: 'fake', password: 'fake')
 
-    Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
+    Sale.create!(store: fake_store, package: fake_package, price: 21, date: Date.current)
   end
 
   it { is_expected.to be_an_instance_of(ShoppingSelection) }
@@ -34,13 +34,13 @@ RSpec.describe GrocerySelectionService, focus: true do
       { store: preferred_store, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 }
     end
 
-    before { Sale.create!(store: preferred_store, user: user, package: fake_package, price: 21, date: Date.current)  }
+    before { Sale.create!(store: preferred_store, package: fake_package, price: 21, date: (Date.today - rand(100)))  }
 
     it { is_expected.to have_attributes(store: preferred_store) }
   end
 
   context 'when there are no sales for the selected item' do
-    subject { GrocerySelectionService.call(errand) }
+    subject { Shopping::GrocerySelector.call(errand) }
 
     let(:errand) { Errand.create!(item: another_fake_item, budgets: [budget], **errand_opts) }
     let(:another_fake_item) { Item.create!(name: 'a different fake item name', department: dept) }
@@ -66,7 +66,7 @@ RSpec.describe GrocerySelectionService, focus: true do
       end
 
       before do
-        Sale.create!(store: fake_store, user: user, package: alternate_package, price: 21, date: Date.current)
+        Sale.create!(store: fake_store, package: alternate_package, price: 21, date: (Date.today - rand(100)) )
       end
 
       it { is_expected.to be_nil }
@@ -75,7 +75,7 @@ RSpec.describe GrocerySelectionService, focus: true do
         subject { shopping_selection.best_matching_deal }
 
         before do
-          Sale.create!(store: fake_store, user: user, package: alternate_package, price: 2.1, date: Date.current)
+          Sale.create!(store: fake_store, package: alternate_package, price: 2.1, date: (Date.today - rand(100)))
         end
 
         it { is_expected.to have_attributes(brand: alternate_brand) }
@@ -83,7 +83,7 @@ RSpec.describe GrocerySelectionService, focus: true do
 
       context 'with an alternate brand at a worse price' do
         before do
-          Sale.create!(store: fake_store, user: user, package: alternate_package, price: 210, date: Date.current)
+          Sale.create!(store: fake_store, package: alternate_package, price: 210, date: (Date.today - rand(100)))
         end
 
         it { is_expected.to be_nil }

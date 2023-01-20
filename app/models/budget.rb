@@ -22,7 +22,7 @@ class Budget < ApplicationRecord
   has_many :budgets_errands
   has_many :errands, through: :budgets_errands
 
-  # Alias the duration for printing as string because our underlying representation is a serialized string
+  # Alias the duration for printing because our underlying representation is a serialized string
   def duration_as_time
     duration.inspect
   end

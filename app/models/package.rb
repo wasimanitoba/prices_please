@@ -27,7 +27,7 @@ class Package < ApplicationRecord
   # The units set by user at time of submitting data
   enum measurement_units: { weight: 0, volume: 1 }
 
-  validates :unit_measurement, presence: true
+  # validates :unit_measurement, presence: true
 
   has_many :sales
   belongs_to :product
@@ -38,7 +38,7 @@ class Package < ApplicationRecord
   delegate :brand, to: :product
 
   before_save do
-    self.total_measurement = unit_measurement * unit_count
+    self.total_measurement = unit_measurement * unit_count if unit_measurement.present?
   end
 
   def to_s
@@ -46,9 +46,11 @@ class Package < ApplicationRecord
   end
 
   def amount(qty = 1)
-    number_to_human(unit_measurement * qty, units: product.measurement_units)
+    number_to_human(unit_measurement * qty, units: product.measurement_units) if unit_measurement.present?
   end
 
   # Get the best SALE price for this PACKAGE for the given STORE
-  def best_deal_for_store(store); end
+  def best_deal_for_store(store)
+    Sale.where(store: store).find_cheapest_sale_for_package(self)
+  end
 end

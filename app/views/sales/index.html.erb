@@ -9,20 +9,15 @@
         <%= render(sale) %>
         <%= sale.details %>
       <%- end %>
-      <p>
-      </p>
     </div>
   <% end %>
-</div>
-
-<div id="valid-sales" class="grid">
   <% @valid_sales.each do |sale| %>
-    <div style="color:green">
-      <%= link_to(sale) do %>
-        <%= render sale %>
-      <%- end %>
-    </div>
-  <% end %>
+  <div style="color:green">
+    <%= link_to(sale) do %>
+      <%= render sale %>
+    <%- end %>
+  </div>
+<% end %>
 </div>
-
+<%= console %>
 <%= link_to "New sale", new_sale_path %>

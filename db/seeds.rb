@@ -6,8 +6,10 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
-Brand.create! name: 'Generic'
-Brand.create! name: 'No Name'
-User.create! email: 'wwa@live.ca', password: 'password'
-Store.create! name: 'Superstore', location: 'St. James'
-Department.create! name: 'produce'
+
+Pipeline.create!(
+  store: Store.create!(name: 'Superstore', location: 'St. James'),
+  website: 'https://www.realcanadiansuperstore.ca/food/fruits-vegetables/c/28000',
+  target: 'ul.product-tile-group__list li:nth-of-type(3n)',
+  department: Department.create!(name: 'produce')
+)

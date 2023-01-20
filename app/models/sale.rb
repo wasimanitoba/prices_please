@@ -28,12 +28,13 @@
 #
 class Sale < ApplicationRecord
   validates :price, presence: true, numericality: { greater_than: 0 }
+  validates :package, uniqueness: { scope: [:date, :pipeline, :store] }
 
   has_many :shopping_selections, inverse_of: :best_matching_deal
   has_many :shopping_selections, inverse_of: :better_alternate_deal
 
+  belongs_to :pipeline, optional: true
   belongs_to :store
-  belongs_to :user
   belongs_to :package
   belongs_to :product, optional: true, inverse_of: :sales
   belongs_to :item, optional: true, inverse_of: :sales
@@ -57,6 +58,8 @@ class Sale < ApplicationRecord
   scope :with_item, -> (sought_item) { with_items.where(packages: { products: { items: sought_item } }) }
 
   def package_valid?
+    return false unless package.unit_measurement.present?
+
     package.unit_measurement > 0
   end
 

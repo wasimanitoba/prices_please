@@ -86,7 +86,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
   create_table "packages", force: :cascade do |t|
     t.decimal "unit_measurement"
     t.bigint "product_id", null: false
-    t.integer "unit_count", default: 1, null: false
+    t.integer "unit_count", default: 1
     t.decimal "total_measurement"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -110,7 +110,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
     t.string "filterable_attributes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "brand_id", null: false
+    t.bigint "brand_id", null: true
     t.index ["brand_id"], name: "index_products_on_brand_id"
     t.index ["item_id"], name: "index_products_on_item_id"
   end
@@ -119,7 +119,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
     t.decimal "price", null: false
     t.bigint "package_id", null: false
     t.bigint "store_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "pipeline_id"
     t.date "date", null: false
     t.string 'details', array: true
     t.integer "quantity", default: 1, null: false
@@ -127,7 +127,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
     t.datetime "updated_at", null: false
     t.index ["package_id"], name: "index_sales_on_package_id"
     t.index ["store_id"], name: "index_sales_on_store_id"
-    t.index ["user_id"], name: "index_sales_on_user_id"
+    t.index ["pipeline_id"], name: "index_sales_on_pipeline_id"
+    t.index ["pipeline_id", "date"], name: "index_sales_on_pipeline_id_and_date"
   end
 
   create_table "shopping_lists", force: :cascade do |t|
@@ -180,7 +181,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_004654) do
   add_foreign_key "products", "items"
   add_foreign_key "sales", "packages"
   add_foreign_key "sales", "stores"
-  add_foreign_key "sales", "users"
+  add_foreign_key "sales", "pipelines"
   add_foreign_key "shopping_lists", "stores", column: "best_value_store_id"
   add_foreign_key "shopping_lists", "stores", column: "cheapest_store_id"
 end

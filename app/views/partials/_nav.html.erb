@@ -1,8 +1,17 @@
-<ul>
-  <li>
-    <%= link_to('Home', root_path) %>
-  </li>
-  <li>
-    <%= link_to('Pipelines', pipelines_path) %>
-  </li>
-</ul>
+<div style="display: flex; justify-content: space-evenly;">
+  <div style="display: flex; justify-content: space-between;">
+    <%= link_to('Grocery List Generator', root_path, style: "margin-right: 1px; margin-left: 1px") %> |
+    <%= link_to('Budget Generator', new_budget_path, style: "margin-right: 1px; margin-left: 1px") %> |
+  </div>
+  <div style="display: flex; justify-content: space-between;">
+    <%= link_to('Shopping Lists', shopping_lists_path, style: "margin-right: 1px; margin-left: 1px") %> |
+    <%= link_to('Errands', errands_path, style: "margin-right: 1px; margin-left: 1px") %> |
+    <%= link_to('Budgets', budgets_path, style: "margin-right: 1px; margin-left: 1px") %>
+  </div>
+
+  <div style="display: flex; justify-content: space-between;">
+    <li>
+      <%= link_to('Web Grocery Data Scraper', pipelines_path) %>
+    </li>
+  </div>
+</div>

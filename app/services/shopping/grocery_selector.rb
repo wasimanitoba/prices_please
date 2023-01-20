@@ -1,7 +1,7 @@
 
 # frozen_string_literal: true
 
-class GrocerySelectionService < ApplicationService
+class Shopping::GrocerySelector < ApplicationService
   def initialize(errand)
     @errand = errand
 

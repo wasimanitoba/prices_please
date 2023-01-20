@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe ListGeneratorService, focus: true do
-  subject(:list) { ListGeneratorService.call(budget, User.last) }
+RSpec.describe Shopping::ListGenerator, focus: true do
+  subject(:list) { Shopping::ListGenerator.call(budget, User.last) }
 
   let(:sale) { Sale.where(user: user).first }
   let(:user) { User.find_by(email: 'fake') }
@@ -20,7 +20,7 @@ RSpec.describe ListGeneratorService, focus: true do
   before do
     user = User.create!(email: 'fake', password: 'fake')
 
-    Sale.create!(store: fake_store, user: user, package: fake_package, price: 21, date: Date.current)
+    Sale.create!(store: fake_store, package: fake_package, price: 21, date: Date.current)
     Errand.create!(item: fake_item, budgets: [budget], **errand_opts)
   end
 
@@ -34,7 +34,7 @@ RSpec.describe ListGeneratorService, focus: true do
   end
 
   context 'with an empty budget' do
-    subject(:list) { ListGeneratorService.call(empty_budget, User.last) }
+    subject(:list) { Shopping::ListGenerator.call(empty_budget, User.last) }
 
     let(:empty_budget) { Budget.create!(users: [User.last], duration: 2.week, total: 3_123_654)  }
 

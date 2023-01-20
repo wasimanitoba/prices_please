@@ -35,7 +35,7 @@ class Product < ApplicationRecord
   def best_deal_for_store(store); end
 
   belongs_to :item
-  belongs_to :brand
+  belongs_to :brand, optional: true
   has_many :packages
   has_many :sales, through: :packages, inverse_of: :product
   accepts_nested_attributes_for :item
