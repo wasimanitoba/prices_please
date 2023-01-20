@@ -34,7 +34,7 @@ RSpec.describe Shopping::GrocerySelector, focus: true do
       { store: preferred_store, estimated_serving_count: 1, estimated_serving_measurement: 10, maximum_spend: 100 }
     end
 
-    before { Sale.create!(store: preferred_store, package: fake_package, price: 21, date: (Date.today - rand(100)))  }
+    before { Sale.create!(store: preferred_store, package: fake_package, price: 21, date: (Date.today - 1))  }
 
     it { is_expected.to have_attributes(store: preferred_store) }
   end
@@ -66,7 +66,7 @@ RSpec.describe Shopping::GrocerySelector, focus: true do
       end
 
       before do
-        Sale.create!(store: fake_store, package: alternate_package, price: 21, date: (Date.today - rand(100)) )
+        Sale.create!(store: fake_store, package: alternate_package, price: 21, date: (Date.today - 2) )
       end
 
       it { is_expected.to be_nil }
@@ -75,7 +75,7 @@ RSpec.describe Shopping::GrocerySelector, focus: true do
         subject { shopping_selection.best_matching_deal }
 
         before do
-          Sale.create!(store: fake_store, package: alternate_package, price: 2.1, date: (Date.today - rand(100)))
+          Sale.create!(store: fake_store, package: alternate_package, price: 2.1, date: (Date.today - 1))
         end
 
         it { is_expected.to have_attributes(brand: alternate_brand) }
@@ -83,7 +83,7 @@ RSpec.describe Shopping::GrocerySelector, focus: true do
 
       context 'with an alternate brand at a worse price' do
         before do
-          Sale.create!(store: fake_store, package: alternate_package, price: 210, date: (Date.today - rand(100)))
+          Sale.create!(store: fake_store, package: alternate_package, price: 210, date: (Date.today - 1))
         end
 
         it { is_expected.to be_nil }
