@@ -32,10 +32,12 @@ RSpec.describe Item, type: :model, focus: true do
     expensive = { name: 'pricey store', location: 'underprivileged neighbourhood', price: 1000 }
     bulk      = { name: 'bulk store', location: 'swanky neighbourhood', price: 100 }
 
+    dates = (1..3).map { |i| (Date.today - i) }
+
     [cheap, expensive, bulk].each do |opts|
       store = Store.create!(name: opts.delete(:name), location: opts.delete(:location))
 
-      opts.merge!({ package: fake_package, store: store, quantity: 1, date: (Date.today - rand(100)) })
+      opts.merge!({ package: fake_package, store: store, quantity: 1, date: dates.pop() })
 
       Sale.create!(**opts)
     end

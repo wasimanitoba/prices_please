@@ -9,29 +9,45 @@ class Load::SalesBuilder < ApplicationService
       store: nil, department: nil, brand: nil, pipeline: nil, details: nil
     )
 
-    if pipeline.blank?
-      raise ActiveRecordError::RecordInvalid, 'Missing both store and pipeline' if store.blank?
+    # We're about to overwrite the Pipeline with a dummy variable if it is nil
+    # So we assign the sales args early with the possibly nil pipeline
+    @sales_args = { pipeline: pipeline, details: details, price: price }
 
-      raise ActiveRecordError::RecordInvalid, 'Missing both department and pipeline' if department.blank?
+    if pipeline.blank?
+      raise StandardError, 'Missing both store and pipeline' if store.blank?
+
+      raise StandardError, 'Missing both department and pipeline' if department.blank?
+
+      # an empty object since we just need the store and department
+      pipeline = Pipeline.new
+
+      # assign department and store to the pipeline; overwrite any the strings with a model.
+      pipeline.department = department.is_a?(String) ? Department.find_by(name: department) : department
+      pipeline.store      = store.is_a?(String) ? Store.find_by(name: store) : store
     end
 
-    @sales_args = { pipeline: pipeline, store: (store || pipeline.store), details: details, price: price }
+    item                  = Item.find_or_create_by(name: item_name, department: pipeline.department )
+    @sales_args[:store]   = pipeline.store
 
-    item                  = Item.find_or_create_by(name: item_name, department: (department || pipeline.department) )
     product               = Product.find_or_create_by(measurement_units: measurement_units, item_id: item.id, brand: brand)
     @sales_args[:package] = Package.find_or_create_by(unit_count: package_count, unit_measurement: package_measurement, product: product)
   end
 
   def call
-    # Only retain one price per package size for a given date
-    existing_sale = Sale.where(date: Date.current, pipeline: @sales_args[:pipeline], package: @sales_args[:package]).first
-    existing_sale.destroy if existing_sale.present?
+    # Only retain one price per package size for a given date and a given store. Overwrite previous value.
+    existing_sale = Sale.where(date: Date.current, **@sales_args.except(:price, :details)).first
 
-    Rails.logger.info "Sales creation Service now creating Sale with characteristics: #{@sales_args} "
+    Rails.logger.info "Sales creation Service is now creating a Sale record with characteristics: #{@sales_args}"
 
-    Load::SalesBuilder.create_from_package(**@sales_args)
-  rescue StandardError => e
-    debugger
+    Sale.transaction do
+      if existing_sale.present?
+        existing_sale.destroy
+
+        Rails.logger.warn "Deleted existing package sale at this store on this date: #{existing_sale.inspect}\n"
+      end
+
+      Load::SalesBuilder.create_from_package(**@sales_args)
+    end
   end
 
   # Make it a bit easier to create Sales objects with some defaults

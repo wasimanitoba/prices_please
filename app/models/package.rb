@@ -36,6 +36,7 @@ class Package < ApplicationRecord
 
   delegate :item, to: :product
   delegate :brand, to: :product
+  delegate :measurement_units, to: :product
 
   before_save do
     self.total_measurement = unit_measurement * unit_count if unit_measurement.present?

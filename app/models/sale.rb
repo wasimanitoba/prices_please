@@ -27,8 +27,11 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Sale < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
+
   validates :price, presence: true, numericality: { greater_than: 0 }
-  validates :package, uniqueness: { scope: [:date, :pipeline, :store] }
+  validates :package, uniqueness: { scope: [:date, :store] }
+  validates :package, uniqueness: { scope: [:date, :pipeline] }
 
   has_many :shopping_selections, inverse_of: :best_matching_deal
   has_many :shopping_selections, inverse_of: :better_alternate_deal
@@ -44,6 +47,8 @@ class Sale < ApplicationRecord
   delegate :item, to: :product
 
   accepts_nested_attributes_for :package
+
+  scope :invalid, -> { with_packages.where(packages: { unit_measurement: nil }) }
 
   scope :with_packages, -> { joins(:package) }
   scope :with_package, -> (sought_package) { with_packages.where(packages: sought_package ) }
@@ -64,7 +69,10 @@ class Sale < ApplicationRecord
   end
 
   def total_measurement
-    quantity * package.unit_count * package.unit_measurement
+    return "MISSING" unless package.unit_measurement && package.unit_count
+
+
+    number_to_human(quantity * package.unit_count * package.unit_measurement, units: package.measurement_units)
   end
 
   def unit_cost

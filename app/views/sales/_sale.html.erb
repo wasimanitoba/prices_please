@@ -1,7 +1,17 @@
-<div id="<%= dom_id sale %>">
-  <p>
-    <strong><%= number_to_currency(sale.price) %></strong> | <%= sale.store %> | <%= sale.date %>
-  </p>
-  <p><%= sale.package %></p>
-  <p><%= sale.details %></p>
-</div>
+<tr id="<%= dom_id sale %>">
+  <td>
+    <p><strong><%= number_to_currency(sale.price) %></strong></p>
+  </td>
+  <td>
+    <p><%= sale.package %></p>
+  </td>
+  <td>
+    <p><%= sale.store %></p>
+  </td>
+  <td>
+    <p>Measurement: <%= sale.total_measurement %></p>
+  </td>
+  <td>
+    <p><%= sale.details %></p>
+  </td>
+</tr>

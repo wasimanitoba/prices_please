@@ -1,23 +1,32 @@
-<p style="color: green"><%= notice %></p>
+<p style="color: green">
+  <%= notice %>
+</p>
 
 <h1>Sales</h1>
 
-<div id="invalid-sales" class="grid">
-  <% @invalid_sales.each do |sale| %>
-    <div style="color:red">
-      <%= link_to(sale) do %>
-        <%= render(sale) %>
-        <%= sale.details %>
-      <%- end %>
-    </div>
-  <% end %>
-  <% @valid_sales.each do |sale| %>
-  <div style="color:green">
-    <%= link_to(sale) do %>
-      <%= render sale %>
-    <%- end %>
+<% @valid_sales.group_by(&:date).each do |date, sales| %>
+  <%= date %>
+  <div id="invalid-sales" class="grid">
+      <% sales.each do |sale| %>
+      <div style="color:green">
+        <%= link_to(sale) do %>
+          <%= render sale %>
+        <%- end %>
+      </div>
+    <% end %>
   </div>
 <% end %>
-</div>
-<%= console %>
-<%= link_to "New sale", new_sale_path %>
+<hr>
+<% @invalid_sales.group_by(&:date).each do |date, sales| %>
+  <%= date %>
+  <div id="invalid-sales" class="grid">
+      <% sales.each do |sale| %>
+      <div style="color:red">
+        <%= link_to(sale) do %>
+          <%= render sale %>
+        <%- end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+<%= link_to "New sale" , new_sale_path %>

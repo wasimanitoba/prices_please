@@ -21,30 +21,22 @@ class Extract::WebScrapingPipeline
   end
 
   def crawl!
-
     begin
-      start_crawler
+      load_website
 
-      Sale.transaction do
-        @ary = @@driver.find_elements(css: @pipeline.target).map do |element|
-          sales_info = Transform::SalesDetailsExtractor.parse(element.text)
-
-          Load::SalesBuilder.call(pipeline: @pipeline, **sales_info)
-        end
-      end
-
-    rescue StandardError => e
-      debugger
-      Rails.logger.fatal "Failed to scrape #{@pipeline.website} with error #{e} \n #{caller_locations}"
+      crawl_target
     ensure
       @@driver.quit
     end
-
-    @ary
   end
 
+  def crawl_target
+    @@driver.find_elements(css: @pipeline.target).map do |element|
+      Load::SalesBuilder.call pipeline: @pipeline, **Transform::SalesDetailsExtractor.call(element.text)
+    end
+  end
 
-  def start_crawler
+  def load_website
     @@driver.get(@pipeline.website)
 
     @@wait.until { document_initialised }
