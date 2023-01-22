@@ -62,15 +62,8 @@ class Sale < ApplicationRecord
   scope :with_items, -> { joins(package: { product: :item }) }
   scope :with_item, -> (sought_item) { with_items.where(packages: { products: { items: sought_item } }) }
 
-  def package_valid?
-    return false unless package.unit_measurement.present?
-
-    package.unit_measurement > 0
-  end
-
   def total_measurement
-    return "MISSING" unless package.unit_measurement && package.unit_count
-
+    return unless package.unit_measurement && package.unit_count
 
     number_to_human(quantity * package.unit_count * package.unit_measurement, units: package.measurement_units)
   end

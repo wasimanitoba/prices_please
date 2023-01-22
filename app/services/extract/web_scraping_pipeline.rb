@@ -32,7 +32,9 @@ class Extract::WebScrapingPipeline
 
   def crawl_target
     @@driver.find_elements(css: @pipeline.target).map do |element|
-      Load::SalesBuilder.call pipeline: @pipeline, **Transform::SalesDetailsExtractor.call(element.text)
+      sales_details = Transform::SalesDetailsExtractor.call(element.text)
+
+      Load::SalesBuilder.call(pipeline: @pipeline, **sales_details)
     end
   end
 

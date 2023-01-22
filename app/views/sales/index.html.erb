@@ -4,28 +4,13 @@
 
 <h1>Sales</h1>
 
-<% @valid_sales.group_by(&:date).each do |date, sales| %>
+<% @sales.group_by(&:date).each do |date, sales| %>
   <%= date %>
   <div id="invalid-sales" class="grid">
-      <% sales.each do |sale| %>
-      <div style="color:green">
-        <%= link_to(sale) do %>
-          <%= render sale %>
-        <%- end %>
-      </div>
-    <% end %>
-  </div>
-<% end %>
-<hr>
-<% @invalid_sales.group_by(&:date).each do |date, sales| %>
-  <%= date %>
-  <div id="invalid-sales" class="grid">
-      <% sales.each do |sale| %>
-      <div style="color:red">
-        <%= link_to(sale) do %>
-          <%= render sale %>
-        <%- end %>
-      </div>
+    <% sales.each do |sale| %>
+      <%= link_to(sale) do %>
+        <%= render sale %>
+      <%- end %>
     <% end %>
   </div>
 <% end %>

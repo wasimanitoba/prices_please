@@ -23,15 +23,17 @@ class Transform::SalesDetailsExtractor < ApplicationService
     # We infer the where the measurement is not listen along with the price, it is parsed from the item name_and_measurement.
     measurement =  if measurement.blank? || measurement.to_i == 0
                     measurement = name_and_measurement&.last.presence
+                   elsif measurement.match?(/\dg/)
+                    # parse non standard measurement
+                    measurement_units = 0
+                    measurement       = (measurement.match(/(?<number>\d+)g/)[:number].to_d / 1000).to_s
                    elsif measurement.match?(/\dkg/)
                     # Explicitly set the measurement units when we see it is sold by kilogram.
                     measurement_units = 0
-                    measurement       = measurement.match(/(?<number>\d)kg/)[:number]
+                    measurement       = measurement.match(/(?<number>\d+)kg/)[:number]
                    end
 
     { price: price, package_measurement: measurement, item_name: item, details: scrubbed_details }
-  rescue StandardError => e
-    Rails.logger.fatal "Failed to scrape: #{e} \n #{caller_locations[1..]}"
   end
 
   def scrubbed_details
