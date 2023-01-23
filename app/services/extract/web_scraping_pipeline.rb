@@ -24,7 +24,7 @@ class Extract::WebScrapingPipeline
     begin
       load_website
 
-      crawl_target
+      Sale.transaction { crawl_target }
     ensure
       @@driver.quit
     end
