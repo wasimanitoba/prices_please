@@ -42,6 +42,13 @@ en:
   store_prices_chart:
     title: Prices by Store (in Dollars Per Kilogram)
     series: price
+  each_package:
+    mili:
+      one: '-'
+      other: '-'
+    unit:
+      one: '-'
+      other: '-'
   weight:
     mili:
       one: "gram"

@@ -25,7 +25,7 @@
 class Product < ApplicationRecord
   include Shoppable
 
-  enum measurement_units: %i[ weight volume ]
+  enum measurement_units: { weight: 0, volume: 1, bunch: 2, each_package: 3  }
 
   validates :measurement_units, presence: true
 

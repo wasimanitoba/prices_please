@@ -5,9 +5,9 @@
 # Table name: packages
 #
 #  id                :bigint           not null, primary key
-#  total_measurement :decimal(, )      not null
+#  total_measurement :decimal(, )
 #  unit_count        :integer          default(1), not null
-#  unit_measurement  :decimal(, )      not null
+#  unit_measurement  :decimal(, )
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  product_id        :bigint           not null
@@ -23,11 +23,6 @@
 class Package < ApplicationRecord
   include ActionView::Helpers::NumberHelper
   include Shoppable
-
-  # The units set by user at time of submitting data
-  enum measurement_units: { weight: 0, volume: 1 }
-
-  # validates :unit_measurement, presence: true
 
   has_many :sales
   belongs_to :product
