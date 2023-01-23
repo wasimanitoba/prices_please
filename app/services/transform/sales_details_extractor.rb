@@ -2,73 +2,62 @@ class Transform::SalesDetailsExtractor < ApplicationService
   REJECTED_PHRASES = ["ADD", "New", "LIMIT", "MULTI", "SALE", "LOW STOCK", /MIN\s\d/]
   REJECTED_WORDS   = %w[Ends SAVE]
 
-  def initialize(details)
-    @details = details.split(/\n/)
+  def initialize(string)
+    @string = string.split(/\n/)
   end
 
   def call
-    # By default, we try to get the price, measurement and item as so:
-    regex = /(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(kg|g|ea))/
-    price_and_measurement = scrubbed_details.third.match(regex)
+    name_measurement  = details.first.match /(?<name>\D+)(?<measurement>\d+\s(g|kg|ml))/
+    price_measurement = details.third.match /(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(kg|g|ea))/
 
-    if price_and_measurement.present?
-      price       = price_and_measurement[:price]
-      measurement = price_and_measurement[:measurement] unless price_and_measurement[:measurement].match?(/ea/)
+    price = if (name_measurement.present? && !price_measurement[:measurement].match?(/ea/))
+              details.second.match(/\$(?<price>\d+\.\d+)ea/)[:price]
+            elsif price_measurement.present?
+              price_measurement[:price]
+            end
+
+    measurement = if name_measurement.present?
+                   name_measurement[:measurement]
+                 elsif price_measurement.present? && !price_measurement[:measurement].match?(/ea/)
+                   price_measurement[:measurement]
+                 end
+
+    name = name_measurement.try { |r| r[:name] } || details[0].split(/\d/).first
+
+    # some capitalized words GetStuckTogetherLikeThis so we underscore_those_words_instead
+    #  ....and then we split them back apart with spaces
+    item = name.underscore.tr('_', ' ').chomp(' ')
+
+    # When the product is packaged by volumne, we get the measurement in litres
+    details[2].match(/(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(ml))/).try do |_|
+      # Use an instance variable because the block won't always initialize this value
+      @measurement_units = 1
+      measurement        = details[0].match(/(?<measurement>\d.\d+)\s(ml|l)/)[:measurement]
+      price              = details[1].match(/\$(?<price>\d+\.\d+)ea/)[:price]
     end
 
-    name_and_measurement = scrubbed_details.first.match(/(?<name>\D+)(?<measurement>\d+\s(g|kg|ml))/)
-
-    # Next we check for an alternate way to get the name, if possible.
-    # In that case, we also overwrite the price. We also do this if the price is nil.
-    if (name_and_measurement.present? && !price_and_measurement[:measurement].match?(/ea/)) || (price.blank?)
-      price = scrubbed_details.second.match(/\$(?<price>\d+\.\d+)ea/)[:price]
+    # Otherwise the product is packaged by weight. Get the kilogram measurement or derive it from the unit cost.
+    measurement = measurement.try do
+      if measurement.match?(/\d(\s*)g/)
+        @measurement_units = 0
+        # parse non standard measurement
+        numeric_measure = (measurement.match(/(?<unit_cost>\d+)(\s*)g/)[:unit_cost].to_d / 1000)
+        # match the format of other cases
+        numeric_measure.to_s
+      elsif measurement.match?(/\d(\s*)kg/)
+        # Explicitly set the measurement units when we see it is sold by kilogram.
+        @measurement_units = 0
+        measurement.match(/(?<number>\d+)(\s*)kg/)[:number]
+       else
+        measurement
+       end
     end
 
-    measurement = name_and_measurement[:measurement] if name_and_measurement.present?
-    item        = scrubbed_details.first.               # the first line
-                                   split(/\d/).         # separate by number
-                                   first.               # the name comes before the number
-                                   gsub(',\s|\s(', ''). # need to remove some punctuation and spacing.
-                                   underscore.          # some capitalized words GetStuckTogetherLikeThis so we underscore_those_words_instead
-                                   tr('_', ' ').        # ....and then we split them back apart with spaces
-                                   chomp(' ')
-
-    # Leave only a numeric value
-    price.gsub!(/ea|\(est\.\)|[$]/, '')
-
-    price_by_volume = scrubbed_details.third.match(/(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(ml))/)
-
-    if price_by_volume.present?
-      measurement_units = 1
-      measurement       = scrubbed_details.first.match(/(?<measurement>\d.\d+)\s(ml|l)/)[:measurement]
-      price             = scrubbed_details.second.match(/\$(?<price>\d+\.\d+)ea/)[:price]
-    end
-
-    # In our test batch, only 25% of sales measurements were correctly extracted.
-    # For the rest, they will be blank so we can overwrite the blank value, which should never be zero.
-    # We infer the where the measurement is not listen along with the price, it is parsed from the item name_and_measurement.
-    measurement =  if measurement.blank? || measurement.to_i == 0
-                    name_and_measurement[:measurement] if name_and_measurement.present?
-                   elsif measurement.match?(/\d(\s*)g/)
-                    measurement_units = 0
-                    # parse non standard measurement
-                    numeric_measure = (measurement.match(/(?<number>\d+)(\s*)g/)[:number].to_d / 1000)
-                    # match the format of other cases
-                    numeric_measure.to_s
-                  elsif measurement.match?(/\d(\s*)kg/)
-                    # Explicitly set the measurement units when we see it is sold by kilogram.
-                    measurement_units = 0
-                    measurement.match(/(?<number>\d+)(\s*)kg/)[:number]
-                   else
-                    measurement
-                   end
-
-
-    { price: price, package_measurement: measurement, item_name: item.chomp, details: scrubbed_details, measurement_units: measurement_units }
+    { price: price.gsub(/ea|\(est\.\)|[$]/, ''), package_measurement: measurement, item_name: item.chomp, details: details, measurement_units: @measurement_units }
   end
 
-  def scrubbed_details
-    @scrubbed_details ||= @details.reject do |phrase|
+  def details
+    @details ||= @string.reject do |phrase|
       REJECTED_PHRASES.include?(phrase) || REJECTED_WORDS.any? { |word| phrase.match?(word) }
     end
   end
