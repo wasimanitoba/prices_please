@@ -66,6 +66,6 @@ class BudgetsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def budget_params
-    params.require(:budget).permit(:duration, :total)
+    params.require(:budget).permit(:duration, :total, budgets_errands_attributes: [:quantity, :maximum_spend, :brand_id, :estimated_serving_count, :estimated_serving_measurement])
   end
 end

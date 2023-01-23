@@ -36,4 +36,9 @@ RSpec.describe Transform::SalesDetailsExtractor, focus: true do
 
     it { is_expected.to include(price: "14.00", package_measurement: "1", item_name: "romaine salad family size", details: details_array) }
   end
+  context 'when measured in non-standard units placed in the name instead of the unit price' do
+    let(:details_string) { "BolthouseGreen Goodness1.54 l\n$8.49ea\n$0.55/ 100ml" }
+
+    it { is_expected.to include(price: "8.49", package_measurement: "1.54", item_name: "bolthouse green goodness", details: details_array, measurement_units: 1) }
+  end
 end

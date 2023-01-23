@@ -66,7 +66,6 @@ class ErrandsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def errand_params
-    params.require(:errand).permit(:quantity, :maximum_spend, :brand_id, :estimated_serving_count,
-                                   :estimated_serving_measurement, :user_id)
+    params.require(:errand).permit(:quantity, :maximum_spend, :brand_id, :estimated_serving_count, :estimated_serving_measurement)
   end
 end

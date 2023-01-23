@@ -1,16 +1,4 @@
-<%= form_with(model: errand) do |form| %>
-  <% if errand.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(errand.errors.count, "error") %> prohibited this errand from being saved:</h2>
-
-      <ul>
-        <% errand.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<div class="wrapper-div" style="border:1px solid black">
   <div>
     <%= form.label :quantity, style: "display: block" %>
     <%= form.number_field :quantity %>
@@ -23,7 +11,7 @@
 
   <div>
     <%= form.label :brand_id, style: "display: block" %>
-    <%= form.text_field :brand_id %>
+    <%= form.select(:brand_id, options_from_collection_for_select(Brand.all, :id, :name)) %>
   </div>
 
   <div>
@@ -36,7 +24,5 @@
     <%= form.text_field :estimated_serving_measurement %>
   </div>
 
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+  <%= link_to_remove_nested(form) %>
+</div>

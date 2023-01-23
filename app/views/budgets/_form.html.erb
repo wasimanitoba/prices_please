@@ -1,4 +1,4 @@
-<%= form_with(model: budget) do |form| %>
+<%= form_for(budget) do |form| %>
   <% if budget.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(budget.errors.count, "error") %> prohibited this budget from being saved:</h2>
@@ -19,6 +19,15 @@
   <div>
     <%= form.label :total, style: "display: block" %>
     <%= form.text_field :total %>
+  </div>
+
+  <div>
+    <%= link_to_add_nested(form, :errands, '#budget-errands', partial: 'budgets/errands_fields') %>
+    <div id='budget-errands'>
+      <%= form.fields_for :errands do |budget_errand_form| %>
+        <%= render 'errands', form: budget_errand_form %>
+      <% end %>
+    </div>
   </div>
 
   <div>

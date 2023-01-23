@@ -21,6 +21,7 @@ class Budget < ApplicationRecord
 
   has_many :budgets_errands
   has_many :errands, through: :budgets_errands
+  accepts_nested_attributes_for :errands, reject_if: :all_blank, allow_destroy: true
 
   # Alias the duration for printing because our underlying representation is a serialized string
   def duration_as_time

@@ -16,13 +16,7 @@ class Transform::SalesDetailsExtractor < ApplicationService
       measurement = price_and_measurement[:measurement] unless price_and_measurement[:measurement].match?(/ea/)
     end
 
-    # replace this with another regex
-    primary_name = scrubbed_details.first.         # the first line
-                            split(/\d/).           # separate by number
-                            first.                 # the name comes before the number
-                            gsub(',\s|\s(', '')    # need to remove some punctuation and spacing
-
-    name_and_measurement = scrubbed_details.first.match(/(?<name>\D+)(?<measurement>\d+\s(g|kg))/)
+    name_and_measurement = scrubbed_details.first.match(/(?<name>\D+)(?<measurement>\d+\s(g|kg|ml))/)
 
     # Next we check for an alternate way to get the name, if possible.
     # In that case, we also overwrite the price. We also do this if the price is nil.
@@ -31,14 +25,24 @@ class Transform::SalesDetailsExtractor < ApplicationService
     end
 
     measurement = name_and_measurement[:measurement] if name_and_measurement.present?
-
-    item = primary_name || alternate_name
-    item = item.underscore.   # some capitalized words GetStuckTogetherLikeThis so we underscore_those_words_instead
-                tr('_', ' '). # ....and then we split them back apart with spaces
-                chomp(' ')
+    item        = scrubbed_details.first.               # the first line
+                                   split(/\d/).         # separate by number
+                                   first.               # the name comes before the number
+                                   gsub(',\s|\s(', ''). # need to remove some punctuation and spacing.
+                                   underscore.          # some capitalized words GetStuckTogetherLikeThis so we underscore_those_words_instead
+                                   tr('_', ' ').        # ....and then we split them back apart with spaces
+                                   chomp(' ')
 
     # Leave only a numeric value
     price.gsub!(/ea|\(est\.\)|[$]/, '')
+
+    price_by_volume = scrubbed_details.third.match(/(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(ml))/)
+
+    if price_by_volume.present?
+      measurement_units = 1
+      measurement       = scrubbed_details.first.match(/(?<measurement>\d.\d+)\s(ml|l)/)[:measurement]
+      price             = scrubbed_details.second.match(/\$(?<price>\d+\.\d+)ea/)[:price]
+    end
 
     # In our test batch, only 25% of sales measurements were correctly extracted.
     # For the rest, they will be blank so we can overwrite the blank value, which should never be zero.
@@ -60,7 +64,7 @@ class Transform::SalesDetailsExtractor < ApplicationService
                    end
 
 
-    { price: price, package_measurement: measurement, item_name: item.chomp, details: scrubbed_details }
+    { price: price, package_measurement: measurement, item_name: item.chomp, details: scrubbed_details, measurement_units: measurement_units }
   end
 
   def scrubbed_details
