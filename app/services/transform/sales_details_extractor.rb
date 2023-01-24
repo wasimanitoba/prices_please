@@ -7,10 +7,10 @@ class Transform::SalesDetailsExtractor < ApplicationService
   end
 
   def call
-    name_measurement  = details.first.match /(?<name>\D+)(?<measurement>\d+\s(g|kg|ml))/
+    name_measurement  = details.first.match /(?<name>\D+)\s*\D*(?<measurement>\d+\s(g|kg|ml))/
     price_measurement = details.third.match /(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(kg|g|ea))/
 
-    price = if (name_measurement.present? && !price_measurement[:measurement].match?(/ea/))
+    price = if (name_measurement.present? && (price_measurement.present? && !price_measurement[:measurement].match?(/ea/)))
               details.second.match(/\$(?<price>\d+\.\d+)ea/)[:price]
             elsif price_measurement.present?
               price_measurement[:price]
@@ -24,10 +24,18 @@ class Transform::SalesDetailsExtractor < ApplicationService
 
     name = name_measurement.try { |r| r[:name] } || details[0].split(/\d/).first
 
+    # -----------------------------------------------------------------------
+    # Fixes name for test case 'when pounds and kilograms are in the unit name'
+    override_regex = /^(?<name>\D+).*\D(?<measurement>\d+).*(g|ml|kg)/
+    name           = details.first.match(override_regex)[:name] if name == 'LB'
+    # Messy override...get rid of this...starting to get out of hand...
+    # -----------------------------------------------------------------------
+
     # some capitalized words GetStuckTogetherLikeThis so we underscore_those_words_instead
     #  ....and then we split them back apart with spaces
     item = name.underscore.tr('_', ' ').chomp(' ')
 
+    # Assume we're dealing with products packaged by weight
     @measurement_units = 0
 
     # When the product is packaged by volumne, we get the measurement in litres
@@ -53,7 +61,13 @@ class Transform::SalesDetailsExtractor < ApplicationService
        end
     end
 
-    { price: price.gsub(/ea|\(est\.\)|[$]/, ''), package_measurement: measurement, item_name: item.chomp, details: details, measurement_units: @measurement_units || Product.measurement_units['each_package'] }
+    {
+      measurement_units: @measurement_units || Product.measurement_units['each_package'],
+      price: price.gsub(/ea|\(est\.\)|[$]/, ''),
+      package_measurement: measurement,
+      item_name: item.chomp,
+      details: details,
+    }
   end
 
   def details

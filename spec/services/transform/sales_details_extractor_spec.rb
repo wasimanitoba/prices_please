@@ -41,4 +41,10 @@ RSpec.describe Transform::SalesDetailsExtractor, focus: true do
 
     it { is_expected.to include(price: "8.49", package_measurement: "1.54", item_name: "bolthouse green goodness", details: details_array, measurement_units: 1) }
   end
+
+  context 'when pounds and kilograms are in the unit name' do
+    let(:details_string) { "Strawberries 1LB454 g\n$6.99ea\n$1.54/ 100g" }
+
+    it { is_expected.to include(price: "6.99", package_measurement: "0.454", item_name: "strawberries", details: details_array, measurement_units: 0) }
+  end
 end
