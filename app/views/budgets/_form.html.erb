@@ -11,26 +11,30 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :duration, style: "display: block" %>
-    <%= form.text_field :duration %>
-  </div>
+    <div class="flex justify-apart">
+      <div>
+        <%= form.label :duration, style: "display: block" %>
+        <%= form.text_field :duration, id: "duration_#{budget.id}", 'data-controller': 'range' %>
+      </div>
 
-  <div>
-    <%= form.label :total, style: "display: block" %>
-    <%= form.text_field :total %>
-  </div>
+      <div>
+        <%= form.label :total, style: "display: block" %>
+        <%= form.text_field :total %>
+      </div>
+      <div>
+        <label><%= I18n.t('labels.create_list') %></label>
+        <%= form.submit %>
+      </div>
+    </div>
 
   <div>
     <%= link_to_add_nested(form, :errands, '#budget-errands', partial: 'budgets/errands_fields') %>
-    <div id='budget-errands'>
+    <div id='budget-errands' class="hidden">
       <%= form.fields_for :errands do |budget_errand_form| %>
         <%= render 'errands', form: budget_errand_form %>
       <% end %>
     </div>
   </div>
 
-  <div>
-    <%= form.submit %>
-  </div>
+
 <% end %>

@@ -1,16 +1,11 @@
-<b><%= I18n.t('headings.shopping_list') %> </b>
 <div class="shopping-list"
      data-controller="shopping"
      data-shopping-selectable-outlet="#selectable">
-  <div>
-    <label><%= I18n.t('labels.create_list') %></label>
-    <%= turbo_frame_tag("selected-items") do %>
-    <%- end %>
-  </div>
   <div id="selectable"
        data-controller="selectable"
        data-selectable-shopping-outlet=".shopping-list">
-    <div data-controller="filter" class="flex row-reverse justify-apart">
+    <div data-controller="filter" class="flex justify-apart">
+        <%= render('budgets/form', budget: Budget.new) %>
       <filter-input aria-owns="grocery-items-filter-list">
         <label><%= I18n.t('labels.filter') %> </label>
         <input type="text" autofocus autocomplete="off" placeholder="Type item name...">

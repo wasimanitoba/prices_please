@@ -29,12 +29,12 @@ export default class extends Controller {
 
     self.selectable.on("selecteditem", (item) => {
       item.node.querySelector("input").checked = true;
-      this.shoppingOutlet.generateShoppingList();
+      // this.shoppingOutlet.generateShoppingList();
     });
 
     self.selectable.on("deselecteditem", (item) => {
       item.node.querySelector("input").checked = false;
-      this.shoppingOutlet.generateShoppingList();
+      // this.shoppingOutlet.generateShoppingList();
     });
 
     self.clear();

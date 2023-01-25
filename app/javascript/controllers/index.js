@@ -7,5 +7,8 @@ import { application } from "./application"
 import FilterController from "./filter_controller"
 application.register("filter", FilterController)
 
+import RangeController from "./range_controller"
+application.register("range", RangeController)
+
 import SelectableController from "./selectable_controller"
 application.register("selectable", SelectableController)

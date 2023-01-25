@@ -1,16 +1,16 @@
 class Extract::WebScrapingPipeline
   Selenium::WebDriver::Chrome::Service.driver_path = "/usr/bin/chromedriver"
 
-  options = Selenium::WebDriver::Chrome::Options.new
-  options.add_argument('--headless')
-  options.add_argument('--disable-gpu')
+  create_options = lambda {
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+
+    options
+  }
 
   @@wait = Selenium::WebDriver::Wait.new(:timeout => 20)
-  @@driver = Selenium::WebDriver.for :chrome, options: options
-
-  def document_initialised
-    @@driver.find_element(css: @pipeline.target)
-  end
+  @@driver = Selenium::WebDriver.for(:chrome, options: create_options.call)
 
   def initialize(pipeline)
     @pipeline = pipeline
@@ -22,31 +22,47 @@ class Extract::WebScrapingPipeline
 
   def crawl!
     begin
-      load_website
+      load_website()
 
-      Sale.transaction { crawl_target }
+      advertisements = @@driver.find_elements(css: @pipeline.target)
+
+      Sale.transaction { extract_and_save_to_database(advertisements) }
     ensure
       @@driver.quit
     end
   end
 
-  def crawl_target
-    @@driver.find_elements(css: @pipeline.target).map do |element|
-      sales_details = Transform::SalesDetailsExtractor.call(element.text)
+  private
 
-      Load::SalesBuilder.call(pipeline: @pipeline, **sales_details)
+    def load_website
+      @@driver.get(@pipeline.website)
+
+      @@wait.until { document_initialised }
     end
-  end
 
-  def load_website
-    @@driver.get(@pipeline.website)
+    def document_initialised
+      @@driver.find_element(css: @pipeline.target)
+    end
 
-    @@wait.until { document_initialised }
-  end
+    def extract_and_save_to_database(advertisements)
+      advertisements.each do |ad|
+        Load::SalesBuilder.call(pipeline: @pipeline, **Transform::SalesDetailsExtractor.call(ad.text))
 
-  def _screenshot(details)
-    # name = details.first.tr(' ', '_').downcase.gsub(/[,|(|)|']/, '')
-    # element.save_screenshot("public/images/#{name}.png")
+        screenshot(ad, extract_name_for_path(ad.text))
+      end
+    end
+
     # TODO: Upload to S3; Add 'thumbnail' column to Packages; Add URL to image
-  end
+    def screenshot(element, file)
+      element.save_screenshot("public/images/#{file}.png")
+    end
+
+    def extract_name_for_path(element)
+      element.
+       text.
+       first.                  # first string is the name
+       tr(' ', '_').           # remove spaces
+       downcase.               # lowercase
+       gsub(/[,|(|)|']/, '')   # remove punctuation
+    end
 end

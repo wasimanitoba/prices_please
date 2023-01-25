@@ -10,8 +10,8 @@
   </div>
 
   <div>
-    <%= form.label :brand_id, style: "display: block" %>
-    <%= form.select(:brand_id, options_from_collection_for_select(Brand.all, :id, :name)) %>
+    <%= form.label :item_id, style: "display: block" %>
+    <%= form.select(:item_id, options_from_collection_for_select(Item.all, :id, :name)) %>
   </div>
 
   <div>
