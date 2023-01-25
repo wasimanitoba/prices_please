@@ -1,12 +1,6 @@
 <div id="<%= dom_id budget %>">
   <p>
     <strong>Duration:</strong>
-    <%= budget.duration %>
+    <%= distance_of_time(budget.duration) %>
   </p>
-
-  <p>
-    <strong>Total:</strong>
-    <%= budget.total %>
-  </p>
-
 </div>

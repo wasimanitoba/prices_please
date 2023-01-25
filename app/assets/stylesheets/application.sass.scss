@@ -1117,9 +1117,9 @@ body.shopping-page .tabulator-paginator {
 .cards {
   scrollbar-color: #705a86 #00000029;
   display: grid;
-  max-height: 90vh;
+  max-height: 60vh;
   overflow-y: scroll;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
 }
 
