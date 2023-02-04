@@ -6,6 +6,8 @@ export default class extends Controller {
       locale: {
         format: "DD-MM-YYYY",
       },
+      startDate: moment(),
+      endDate: moment().add(7, 'days'),
       ranges: {
         '7 Days': [moment(), moment().add(7, 'days')],
         '10 Days': [ moment(), moment().add(10, 'days')],

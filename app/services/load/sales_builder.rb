@@ -9,8 +9,8 @@ class Load::SalesBuilder < ApplicationService
       store: nil, department: nil, brand: nil, pipeline: nil, details: nil
     )
 
-    # We're about to overwrite the Pipeline with a dummy variable if it is nil
-    # So we assign the sales args early with the possibly nil pipeline
+    # We're about to overwrite the Pipeline with a dummy variable to if it is nil make the code cleaner So we assign the
+    # sales args early with the possibly nil pipeline because we want the sales_args to contain the input arg instead of the dummy variable
     @sales_args = { pipeline: pipeline, details: details, price: price }
 
     if pipeline.blank?
@@ -46,12 +46,11 @@ class Load::SalesBuilder < ApplicationService
         Rails.logger.warn "Deleted existing package sale at this store on this date: #{existing_sale.inspect}\n"
       end
 
-      Load::SalesBuilder.create_from_package(**@sales_args)
+      Load::SalesBuilder.insert_into_database(**@sales_args)
     end
   end
 
-  # Make it a bit easier to create Sales objects with some defaults
-  def self.create_from_package(package:, price:, store:, sale_qty: 1, pipeline: nil, details: nil)
+  def self.insert_into_database(package:, price:, store:, sale_qty: 1, pipeline: nil, details: nil)
     Sale.create!(
       price: price.to_d,
       date: Date.current,

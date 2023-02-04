@@ -42,8 +42,8 @@ class Transform::SalesDetailsExtractor < ApplicationService
     details[2].match(/(?<price>(\d+).(\d+))\/\s(?<measurement>\d+(ml))/).try do |_|
       # Use an instance variable because the block won't always initialize this value
       @measurement_units = 1
-      measurement        = details[0].match(/(?<measurement>\d.\d+)\s(ml|l)/)[:measurement]
-      price              = details[1].match(/\$(?<price>\d+\.\d+)ea/)[:price]
+      details[0].match(/(?<measurement>\d.\d+)\s(ml|l)/).try { |regex| measurement = regex[:measurement] }
+      details[1].match(/\$(?<price>\d+\.\d+)ea/).try         { |regex| price       = regex[:price] }
     end
 
     # Otherwise the product is packaged by weight. Get the kilogram measurement or derive it from the unit cost.

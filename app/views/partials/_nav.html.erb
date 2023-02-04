@@ -11,16 +11,4 @@
   <%= link_to('Items', items_path, style: "margin-right: 1px; margin-left: 1px") %> |
   <%= link_to('Packages', packages_path, style: "margin-right: 1px; margin-left: 1px") %> |
   <%= link_to('Web Grocery Data Scraper', pipelines_path) %>
-  <div class="two columns u-pull-right">
-    <ul>
-        <li class="submenu">
-          <img id="img-cart" src="data:image/png;base64,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">
-                <div id="shopping-cart">
-                  <%= turbo_frame_tag("selected-items") do %>
-                  <%- end %>
-                  <a href="#" id="clear-cart" class="button u-full-width">Clear Cart</a>
-                </div>
-        </li>
-    </ul>
-  </div>
 </div>

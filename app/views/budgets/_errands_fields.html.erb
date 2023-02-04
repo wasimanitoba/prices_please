@@ -1,28 +1,36 @@
-<div class="wrapper-div" style="border:1px solid black">
-  <div>
-    <%= form.label :quantity, style: "display: block" %>
-    <%= form.number_field :quantity %>
-  </div>
-
-  <div>
-    <%= form.label :maximum_spend, style: "display: block" %>
-    <%= form.text_field :maximum_spend %>
-  </div>
-
+<div data-shopping-target="errand"  style="border:1px solid black">
   <div>
     <%= form.label :item_id, style: "display: block" %>
     <%= form.select(:item_id, options_from_collection_for_select(Item.all, :id, :name)) %>
   </div>
 
-  <div>
-    <%= form.label :estimated_serving_count, style: "display: block" %>
-    <%= form.number_field :estimated_serving_count %>
-  </div>
+  <details>
+    <summary>Price</summary>
+    <div>
+      <%= form.label :maximum_spend, style: "display: block" %>
+      <%= form.text_field :maximum_spend %>
+    </div>
+  </details>
 
-  <div>
-    <%= form.label :estimated_serving_measurement, style: "display: block" %>
-    <%= form.text_field :estimated_serving_measurement %>
-  </div>
+  <details>
+    <summary>Amount</summary>
+    <div>
+      <%= form.label :quantity, style: "display: block" %>
+      <%= form.number_field :quantity %>
+    </div>
+    <div>
+      <%= form.label :estimated_serving_count, style: "display: block" %>
+      <%= form.number_field :estimated_serving_count %>
+    </div>
 
+    <div>
+      <%= form.label :estimated_serving_measurement, style: "display: block" %>
+      <%= form.text_field :estimated_serving_measurement %>
+    </div>
+
+  </details>
   <%= link_to_remove_nested(form) %>
+  <%= link_to_remove_nested(form) do %>
+    <span data-shopping-target="removeButton">Link for Remove Nested</span>
+  <%- end %>
 </div>

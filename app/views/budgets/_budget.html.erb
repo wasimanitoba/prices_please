@@ -3,4 +3,8 @@
     <strong>Duration:</strong>
     <%= distance_of_time(budget.duration) %>
   </p>
+  <%- budget.errands.each do |errand| %>
+    <%= errand %>
+  <%- end %>
+
 </div>

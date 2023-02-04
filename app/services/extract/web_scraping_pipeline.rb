@@ -26,7 +26,7 @@ class Extract::WebScrapingPipeline
 
       advertisements = @@driver.find_elements(css: @pipeline.target)
 
-      Sale.transaction { extract_and_save_to_database(advertisements) }
+      extract_and_save_to_database(advertisements)
     ensure
       @@driver.quit
     end
@@ -57,9 +57,9 @@ class Extract::WebScrapingPipeline
       element.save_screenshot("public/images/#{file}.png")
     end
 
-    def extract_name_for_path(element)
-      element.
+    def extract_name_for_path(text)
        text.
+       split.
        first.                  # first string is the name
        tr(' ', '_').           # remove spaces
        downcase.               # lowercase

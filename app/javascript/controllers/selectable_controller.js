@@ -19,25 +19,30 @@ export default class extends Controller {
   }
 
   connect() {
-    const self      = this;
-    self.selectable = new Selectable({
+    this.selectable = new Selectable({
       filter: ".item",
       ignore: ["input", "select", "summary"],
       appendTo: "#items",
       toggle: true
     });
 
-    self.selectable.on("selecteditem", (item) => {
+    this.selectable.on("selecteditem", (item) => {
       item.node.querySelector("input").checked = true;
-      // this.shoppingOutlet.generateShoppingList();
+
+      let hiddenDiv = item.node.querySelector('div.details[hidden]');
+      if (hiddenDiv) hiddenDiv.hidden = false;
+
+      this.shoppingOutlet.addToShoppingList(item);
     });
 
-    self.selectable.on("deselecteditem", (item) => {
+    this.selectable.on("deselecteditem", (item) => {
       item.node.querySelector("input").checked = false;
-      // this.shoppingOutlet.generateShoppingList();
-    });
 
-    self.clear();
+      let div = item.node.querySelector('div.details:not([hidden])');
+      if (div) div.hidden = true;
+
+      this.shoppingOutlet.removeFromShoppingList(item);
+    });
   }
 
   clear() {
@@ -46,6 +51,7 @@ export default class extends Controller {
 
   itemConnectedCallback(item) {
     this.selectable.add([item]);
+    item.closest('input').checked = false;
   }
 
   disconnect() {

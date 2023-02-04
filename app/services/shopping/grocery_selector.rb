@@ -15,7 +15,7 @@ class Shopping::GrocerySelector < ApplicationService
                         errand.item.best_deal_for_brand(errand.brand)
                       end
 
-    # If a matching sale isn't present, we'll perform on operations on the best available deal for this item.
+    # If a matching sale isn't present, we'll perform operations on the best available deal for this item.
     @fallback_selection = @matching_sale || errand.item.best_deal
 
     return if @fallback_selection.blank?

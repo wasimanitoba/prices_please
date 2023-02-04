@@ -12,3 +12,6 @@ application.register("range", RangeController)
 
 import SelectableController from "./selectable_controller"
 application.register("selectable", SelectableController)
+
+import ShoppingController from "./shopping_controller"
+application.register("shopping", ShoppingController)

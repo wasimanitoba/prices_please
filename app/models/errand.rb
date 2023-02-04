@@ -41,4 +41,5 @@ class Errand < ApplicationRecord
   has_many :budgets_errands
   has_many :budgets, through: :budgets_errands
   belongs_to :item
+  delegate :to_s, to: :inspect
 end

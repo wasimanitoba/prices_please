@@ -1,54 +1,54 @@
-<div class="shopping-list"
-     data-controller="shopping"
-     data-shopping-selectable-outlet="#selectable">
+<div
+  class="shopping-list"
+  data-controller="shopping"
+  data-shopping-selectable-outlet="#selectable">
   <div id="selectable"
        data-controller="selectable"
-       data-selectable-shopping-outlet=".shopping-list">
-    <div data-controller="filter" class="flex justify-apart">
-        <%= render('budgets/form', budget: Budget.new) %>
-      <filter-input aria-owns="grocery-items-filter-list">
-        <label><%= I18n.t('labels.filter') %> </label>
-        <input type="text" autofocus autocomplete="off" placeholder="Type item name...">
-      </filter-input>
-      <div class="flex-column">
-        <label>Unselect all items</label>
-        <button data-action="shopping#clear">Clear</button>
-      </div>
-      <div class="flex-column">
-        <label>Select all items</label>
-        <button data-action="shopping#all">Add All</button>
-      </div>
-    </div>
+       data-selectable-shopping-outlet=".shopping-list"
+       style="display: grid;grid-template-columns: 13vw 3fr;grid-template-rows: 1fr;">
+    <%= render('budgets/form', budget: Budget.new) %>
     <div id="grocery-items-filter-list">
-      <div id="items" data-filter-list class="cards">
+      <div class="flex justify-apart" data-controller="filter">
+        <filter-input aria-owns="grocery-items-filter-list">
+           <input type="text" autofocus autocomplete="off" placeholder="Type item name...">
+        </filter-input>
+        <div class="flex">
+          <button style="margin-right: 1%" data-action="shopping#clear:prevent">Clear</button>
+          <button data-action="shopping#all">Add All</button>
+        </div>
+      </div>
+      <form id="items"
+            data-filter-list
+            class="cards"
+            method="post"
+            data-shopping-target="form">
         <% Item.all.each do |item| %>
           <div id="<%= item.id %>" class="item">
-            <form class="card"
-                  method="post"
-                  data-turbo-frame="selected-items"
-                  data-shopping-target="form"
-                  data-selectable-target="item">
+            <div class="card"
+                data-selectable-target="item">
               <header class="content"><span data-filter-item-text><%= item %></span></header>
               <%#= image_tag(item.picture, class: 'card-image', alt: "Thumbnail for #{item}", 'data-action': "click->shopping#generateShoppingList:prevent" ) %>
               <div class="card-action flex justify-apart">
-                 <details>
-                    <summary>
-                      <label>Package Sizes</label>
-
+                 <div>
+                    <div>
                       <input type="checkbox"
                         name="checkbox_<%= item.id %>"
+                        autocomplete="off"
                         data-selectable-target="input"
                         data-action="change->selectable#update"
                         id="checkbox_<%= item.id %>">
-                    </summary>
-                    <%= number_field_tag(:quantity, 1, min: 1, 'data-action': 'change->selectable#update') %>
-                    <%= select_tag(:package, options_from_collection_for_select(item.packages, :id, :amount), include_blank: "All Sizes", 'data-action': 'change->selectable#update') %>
-                 </details>
+                    </div>
+                    <div class="details" hidden>
+                      <label>Quantity</label>
+                      <%= number_field_tag(:quantity, 1, min: 1, 'data-action': 'change->selectable#update') %>
+                      <%= select_tag(:package, options_from_collection_for_select(item.packages, :id, :amount), include_blank: false, 'data-action': 'change->selectable#update') %>
+                    </div>
+                 </div>
               </div>
-            </form>
+            </div>
           </div>
         <% end %>
-      </div>
+        </form>
       <p data-filter-empty-state hidden>
         0 matching groceries found.
         <%= link_to(I18n.t('alerts.no_results_found'), new_item_path) %>
